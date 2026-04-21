@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Robot Wake-Up — Scroll-Stop Prompts</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0d1421;
+    --surface: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --gold: #FFCF23;
+    --gold-dark: #A68200;
+    --blue: #146EEC;
+    --navy: #1E293B;
+    --text: #e8eaf6;
+    --muted: rgba(232,234,246,0.5);
+    --radius: 16px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans Arabic', sans-serif; min-height: 100vh; overflow-x: hidden; position: relative; }
+
+  /* ── ORBS ── */
+  .orb { position: fixed; border-radius: 50%; filter: blur(130px); opacity: 0.13; pointer-events: none; z-index: 0; animation: drift 20s ease-in-out infinite alternate; }
+  .orb-1 { width: 600px; height: 600px; background: #146EEC; top: -180px; right: -120px; }
+  .orb-2 { width: 450px; height: 450px; background: #A68200; bottom: -100px; left: -80px; animation-delay: -8s; }
+  .orb-3 { width: 250px; height: 250px; background: #FFCF23; top: 45%; left: 45%; opacity: 0.05; animation-delay: -14s; }
+  @keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(38px,28px) scale(1.09); } }
+
+  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(20,110,236,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(20,110,236,0.03) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
+
+  .wrapper { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; padding: 60px 24px 90px; }
+
+  /* ── HEADER ── */
+  .header { text-align: center; margin-bottom: 52px; }
+  .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(20,110,236,0.1); border: 1px solid rgba(20,110,236,0.28); border-radius: 999px; padding: 6px 18px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6daeff; margin-bottom: 26px; }
+  .badge::before { content: '🤖'; font-size: 14px; }
+  .headline { font-family: 'Space Grotesk', sans-serif; font-size: clamp(38px, 7vw, 66px); font-weight: 700; line-height: 1; letter-spacing: -0.03em; }
+  .headline .l1 { color: var(--gold); display: block; text-shadow: 0 0 40px rgba(255,207,35,0.3); }
+  .headline .l2 { color: rgba(232,234,246,0.15); display: block; }
+  .subline { margin-top: 16px; color: var(--muted); font-size: 14px; line-height: 1.7; max-width: 520px; margin-left: auto; margin-right: auto; font-family: 'IBM Plex Sans Arabic', sans-serif; }
+
+  /* robot preview */
+  .robot-states { display: flex; justify-content: center; gap: 32px; margin-top: 24px; flex-wrap: wrap; }
+  .state-pill { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 8px 18px; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; }
+  .state-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-sleep { background: #94A3B8; }
+  .dot-wake { background: #146EEC; box-shadow: 0 0 8px rgba(20,110,236,0.8); animation: pulse-blue 1.5s ease-in-out infinite; }
+  @keyframes pulse-blue { 0%,100%{box-shadow:0 0 4px rgba(20,110,236,.8)} 50%{box-shadow:0 0 12px rgba(20,110,236,1)} }
+
+  /* ── PALETTE ── */
+  .palette { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+  .swatch { display: flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .swatch-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 5px; margin-bottom: 20px; backdrop-filter: blur(12px); }
+  .tab-btn { flex: 1; padding: 13px 8px; background: transparent; border: none; border-radius: 10px; color: var(--muted); font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; cursor: pointer; transition: all 0.22s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+  .tab-btn.active { background: linear-gradient(135deg, rgba(20,110,236,0.15), rgba(166,130,0,0.1)); border: 1px solid rgba(20,110,236,0.3); color: #6daeff; }
+  .tab-letter { display: inline-block; width: 22px; height: 22px; background: linear-gradient(135deg, #146EEC, #A68200); border-radius: 6px; font-size: 11px; line-height: 22px; text-align: center; margin-left: 7px; color: #fff; font-weight: 700; }
+  .tab-btn.active .tab-letter { background: #146EEC; }
+
+  /* ── PANELS ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── CARD ── */
+  .prompt-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); backdrop-filter: blur(18px); overflow: hidden; }
+  .card-header { display: flex; align-items: flex-start; justify-content: space-between; padding: 22px 24px 18px; border-bottom: 1px solid var(--border); gap: 16px; }
+  .card-label { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6daeff; margin-bottom: 4px; }
+  .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: var(--text); }
+  .card-sub { font-size: 12px; color: var(--muted); margin-top: 4px; font-family: 'IBM Plex Sans Arabic', sans-serif; }
+
+  /* upload badge */
+  .upload-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,207,35,0.1); border: 1px solid rgba(255,207,35,0.3); border-radius: 999px; padding: 4px 12px; font-size: 11px; font-weight: 600; color: var(--gold); margin-top: 6px; font-family: 'Space Grotesk', sans-serif; }
+  .upload-badge::before { content: '📎'; }
+
+  .copy-btn { flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: linear-gradient(135deg, rgba(20,110,236,0.12), rgba(166,130,0,0.08)); border: 1px solid rgba(20,110,236,0.28); border-radius: 10px; color: #6daeff; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .copy-btn:hover { background: linear-gradient(135deg, rgba(20,110,236,0.22), rgba(166,130,0,0.15)); border-color: rgba(20,110,236,0.6); transform: translateY(-1px); box-shadow: 0 4px 18px rgba(20,110,236,0.15); }
+  .copy-btn.copied { background: rgba(255,207,35,0.1); border-color: rgba(255,207,35,0.4); color: var(--gold); }
+
+  .prompt-body { padding: 24px; }
+  .prompt-text { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.9; color: rgba(232,234,246,0.82); white-space: pre-wrap; word-break: break-word; user-select: all; direction: ltr; text-align: left; }
+
+  .tip-row { display: flex; align-items: center; gap: 10px; padding: 12px 24px; background: rgba(20,110,236,0.04); border-top: 1px solid var(--border); }
+  .tip-dot { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
+  .tip-text { font-size: 12px; color: var(--muted); font-family: 'IBM Plex Sans Arabic', sans-serif; }
+
+  /* ── SETTINGS ── */
+  .settings { margin-top: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; backdrop-filter: blur(12px); }
+  .s-label { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-dark); margin-bottom: 4px; }
+  .s-val { font-size: 12px; color: var(--muted); line-height: 1.5; font-family: 'IBM Plex Sans Arabic', sans-serif; }
+
+  /* ── KBD ── */
+  .kbd-row { display: flex; gap: 16px; justify-content: center; margin-top: 26px; flex-wrap: wrap; }
+  .kbd-hint { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); font-family: 'Space Grotesk', sans-serif; }
+  kbd { background: var(--surface); border: 1px solid var(--border); border-radius: 5px; padding: 2px 7px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text); }
+
+  /* ── CONFETTI ── */
+  #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 9999; }
+
+  @media (max-width: 580px) {
+    .tab-btn { font-size: 10px; padding: 9px 4px; }
+    .card-header { flex-direction: column; }
+    .copy-btn { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="badge">Scroll-Stop Prompt Set</div>
+    <h1 class="headline">
+      <span class="l1">ROBOT</span>
+      <span class="l2">WAKE-UP</span>
+    </h1>
+    <p class="subline">٣ برومتات مترابطة — روبوت نايم → صاحي يعمل باي باي → الرسائل بتظهر. ابعت صورة الروبوت مع كل برومت كـ reference.</p>
+
+    <div class="robot-states">
+      <div class="state-pill"><div class="state-dot dot-sleep"></div> State A — نايم</div>
+      <div style="color:var(--muted);line-height:40px">→</div>
+      <div class="state-pill"><div class="state-dot dot-wake"></div> State B — صاحي 👋</div>
+    </div>
+
+    <div class="palette">
+      <div class="swatch"><div class="swatch-dot" style="background:#FFCF23"></div>#FFCF23</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#A68200"></div>#A68200</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#146EEC"></div>#146EEC</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#1E293B;border:1px solid #fff2"></div>#1E293B</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" onclick="switchTab(0)"><span class="tab-letter">A</span>Robot Sleeping</button>
+    <button class="tab-btn" onclick="switchTab(1)"><span class="tab-letter">B</span>Robot Waving</button>
+    <button class="tab-btn" onclick="switchTab(2)"><span class="tab-letter">C</span>Video Animation</button>
+  </div>
+
+  <!-- ══ PANEL A ══ -->
+  <div class="panel active" id="panel-0">
+    <div class="prompt-card">
+      <div class="card-header">
+        <div>
+          <div class="card-label">Prompt A · Image Generator — ابعته مع صورة الروبوت</div>
+          <div class="card-title">الروبوت نايم — Start Frame</div>
+          <div class="card-sub">الحالة الأولى قبل ما المستخدم يوصل للسكشن</div>
+          <div class="upload-badge">ارفع صورة الروبوت مع البرومت ده</div>
+        </div>
+        <button class="copy-btn" onclick="copyPrompt(0, this)">⧉ Copy</button>
+      </div>
+      <div class="prompt-body">
+        <pre class="prompt-text" id="text-0">Use the uploaded robot character as the exact reference. Reproduce the same 3D robot with identical design, proportions, colors, and style.
+
+SCENE: The robot is in a "sleeping / powered-down" state.
+
+ROBOT POSE — SLEEPING STATE:
+- Body: slightly hunched forward, center of gravity lowered
+- Head: tilted downward about 30–40°, chin toward chest, as if dozing off
+- Arms: hanging loosely at sides, relaxed, no tension
+- Legs/base: slightly bent or tucked, robot floating very close to its circular platform rings below — only 5–10px gap between feet and the top ring
+- Overall silhouette: compact, small, curled inward
+
+EYES: Both eye lenses are completely dark — no glow, no light, pupils off. The eye sockets show a faint dark teal ring outline only (#0a2a2a), conveying a powered-down state. No blue glow whatsoever.
+
+PLATFORM RINGS (below the robot): Three concentric elliptical rings — colors matching the design system:
+- Outer ring: #A68200 (dark gold), thin stroke ~2px, 20% opacity
+- Middle ring: #FFCF23 (bright yellow), thin stroke ~1.5px, 30% opacity  
+- Inner ring: #146EEC (electric blue), thin stroke ~1px, 15% opacity
+Rings are flat, horizontal, glowing very subtly. Robot floats just above them.
+
+BACKGROUND: Deep navy #1E293B, clean, no texture. A very faint radial dark-vignette around the robot reinforces the "dim / sleeping" mood.
+
+LIGHTING: Minimal ambient light from below (the rings cast a faint warm-gold glow upward). No direct lighting. The scene feels dim, quiet, at rest.
+
+STYLE: Clean 3D render, same art style as reference. Centered composition, 16:9 aspect ratio. No text, no UI elements, no background elements.</pre>
+      </div>
+      <div class="tip-row">
+        <div class="tip-dot"></div>
+        <span class="tip-text">ارفع صورة الروبوت كـ image reference مع البرومت ده في Midjourney أو Ideogram. ده الـ start frame.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PANEL B ══ -->
+  <div class="panel" id="panel-1">
+    <div class="prompt-card">
+      <div class="card-header">
+        <div>
+          <div class="card-label">Prompt B · Image Generator — ابعته مع صورة الروبوت</div>
+          <div class="card-title">الروبوت صاحي بيعمل باي باي — End Frame</div>
+          <div class="card-sub">الحالة النهائية بعد الأنيميشن — مع الرسالتين</div>
+          <div class="upload-badge">ارفع صورة الروبوت مع البرومت ده</div>
+        </div>
+        <button class="copy-btn" onclick="copyPrompt(1, this)">⧉ Copy</button>
+      </div>
+      <div class="prompt-body">
+        <pre class="prompt-text" id="text-1">Use the uploaded robot character as the exact reference. Reproduce the same 3D robot with identical design, proportions, colors, and style.
+
+SCENE: The robot has just fully woken up and is enthusiastically waving hello/goodbye.
+
+ROBOT POSE — AWAKE WAVING STATE:
+- Body: upright, confident, slight lean to one side (casual, friendly)
+- Head: raised, facing slightly upward and toward viewer, full attention
+- Right arm: raised high, elbow bent, hand open in a clear friendly wave gesture — wrist angled naturally
+- Left arm: relaxed at side or slightly out for balance
+- Robot floating ~40px above the platform rings, lifted with energy
+
+EYES: Both eye lenses are FULLY ILLUMINATED — bright electric blue (#146EEC) glow. Inner pupil: near-white (#e8f4ff). Outer iris ring: #146EEC with a 20px radial glow halo. The eyes should feel alive, warm, attentive. This is the most important detail.
+
+PLATFORM RINGS (below the robot, further away now):
+- All three rings now brighter and more saturated than in the sleeping state
+- Outer ring: #A68200, 40% opacity, subtle pulsing glow
+- Middle ring: #FFCF23, 55% opacity, visible warm gold glow
+- Inner ring: #146EEC, 35% opacity, electric blue halo
+- Rings animate implied motion: slight concentric ripple effect
+
+TWO FLOATING MESSAGE CARDS (glass-morphism UI cards):
+Position card 1 to the RIGHT of the robot (viewer's left in RTL layout):
+  Background: rgba(30, 41, 59, 0.85) — #1E293B at 85%
+  Border: 1px solid rgba(255, 207, 35, 0.25)
+  Border-radius: 14px
+  Padding: 16px 20px
+  Text (Arabic, right-aligned): "ابدأ الآن بتحديد اهتماماتك والهداف المهنية وكفليتك الخاصة عبر نظام ذكي متكامل"
+  Text color: #e8eaf6 (near white), font size ~13px
+  Card has a subtle gold-left-border accent: 3px solid #FFCF23 on the right side
+
+Position card 2 to the LEFT of the robot (viewer's right in RTL layout):
+  Same glass-morphism style
+  Border accent: 3px solid #146EEC on the left side
+  Text (Arabic, right-aligned): "بناءً على إجاباتك، سنقترح عليك أفضل المسارات التعليمية تناسب شخصيتك تماماً"
+  Text color: #e8eaf6
+  Blue glow accent on this card
+
+Both cards: slightly elevated (drop-shadow: 0 8px 32px rgba(0,0,0,0.4)), floating naturally beside the robot, not perfectly aligned — organic placement.
+
+BACKGROUND: Deep navy #1E293B. The robot's active eyes and glowing rings illuminate the surrounding area with a soft warm-blue ambient.
+
+HEADLINE TEXT (top of frame):
+Arabic heading: "حوّل شغفك إلى مهنة احترافية."
+Color: #FFCF23 (bright yellow-gold)
+Font: bold, modern Arabic serif or sans-serif
+Position: upper portion of frame, right-aligned
+
+LIGHTING: Bright, warm-cool contrast. Blue eye-light from front, warm gold ring-light from below.
+
+STYLE: Same 3D art style as reference robot. Centered composition with cards flanking. 16:9 aspect ratio.</pre>
+      </div>
+      <div class="tip-row">
+        <div class="tip-dot"></div>
+        <span class="tip-text">ارفع صورة الروبوت كـ reference. ده الـ end frame بتاع الفيديو — الشكل النهائي للسكشن.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PANEL C ══ -->
+  <div class="panel" id="panel-2">
+    <div class="prompt-card">
+      <div class="card-header">
+        <div>
+          <div class="card-label">Prompt C · Video Model (Runway / Kling / Pika)</div>
+          <div class="card-title">أنيميشن الصحيان الكامل — 4–6 ثواني</div>
+          <div class="card-sub">ارفع Prompt A كـ start frame و Prompt B كـ end frame</div>
+        </div>
+        <button class="copy-btn" onclick="copyPrompt(2, this)">⧉ Copy</button>
+      </div>
+      <div class="prompt-body">
+        <pre class="prompt-text" id="text-2">START FRAME: A small 3D robot character in a sleeping/powered-down state. Head tilted down 35°, arms relaxed at sides, body slightly hunched. Eyes completely dark — no glow, no light. Robot floating very close (5px gap) above three concentric elliptical rings (gold #A68200, yellow #FFCF23, blue #146EEC) that glow dimly. Dark navy background #1E293B. Quiet, still, dim.
+
+END FRAME: Same robot, now fully awake and waving enthusiastically. Head raised, right arm up in a friendly wave, eyes glowing bright electric blue (#146EEC) with visible white iris core. Robot has floated higher above the platform rings, which now glow brighter. Two glass-morphism Arabic text cards float on either side of the robot. Arabic headline "#FFCF23 حوّل شغفك إلى مهنة احترافية" visible at top. Scene is bright, warm, energetic.
+
+ANIMATION SEQUENCE:
+
+[0.0s – 0.4s] DORMANT HOLD
+Complete stillness. Robot sleeping, eyes off, rings barely glowing. Establish the quiet resting state.
+
+[0.4s – 1.0s] POWER-ON SEQUENCE
+The three platform rings beneath the robot begin to pulse — a slow ripple emanates outward from the innermost ring (#146EEC) to the outer rings. Glow intensity increases from 15% → 60% over 0.6s. Simultaneously, the robot's eye sockets flicker once — a very brief flash (0.05s) of blue light then back to dark, like a system boot flicker.
+
+[1.0s – 1.5s] EYES ILLUMINATE
+The robot's eyes light up — not instantly, but with a smooth bloom effect: dark → dim blue → bright electric blue (#146EEC) over 0.5s. The iris pupils brighten to near-white in the center. A soft 30px radial glow emanates from each eye, casting faint blue light on the robot's face/chest. The robot's posture begins to straighten — head lifts ~10°.
+
+[1.5s – 2.2s] BODY LIFT & WAKE
+The robot's full body wakes with a smooth spring-eased upward motion:
+- Head continues rising to full upright position
+- Spine/torso straightens with a subtle bounce (overshoot 5° then settle)
+- Arms begin to separate from body — left arm swings slightly out, right arm begins rising
+- Robot floats upward ~40px from its starting position, moving away from the platform rings
+- The rings below respond: all three rings brighten and expand slightly outward (5% scale increase), as if energized by the robot lifting off
+Easing: spring physics — ease-in-out with a gentle overshoot and settle
+
+[2.2s – 3.0s] WAVE GESTURE
+The robot's right arm continues its arc upward — elbow bending, forearm rising, hand opening into a clear friendly wave. The wave motion has a slight secondary bounce: arm overshoots the final position by 10° then settles. The robot's body leans slightly in the direction of the wave (weight shift, feels natural). Head tilts slightly toward the waving arm with a friendly tilt of ~8°.
+
+[3.0s – 3.6s] CARD ENTRANCE — CARD 1 (RIGHT SIDE)
+The first glass-morphism card (dark navy background, gold border accent, Arabic text) slides in from the right side of frame. Motion: starts from 40px outside right edge, moves to final position with ease-out deceleration. Simultaneously fades from opacity 0 → 100%. As it arrives, a very subtle scale bounce (0.95 → 1.02 → 1.0) gives it a "snap into place" feel. Gold border accent (#FFCF23) glows briefly on arrival.
+
+[3.6s – 4.2s] CARD ENTRANCE — CARD 2 (LEFT SIDE)
+0.6s after card 1, the second card (blue border accent #146EEC) slides in from the left side — same animation mechanics, mirrored. The robot's head turns very slightly toward this card as it arrives, acknowledging it.
+
+[4.2s – 5.0s] FINAL STATE HOLD
+All elements settled: robot waving, eyes glowing, both cards visible, rings glowing steadily. A very slow, subtle float animation begins on the robot (sinusoidal hover: 6px up/down over 2s period). The rings have a slow continuous pulse glow. Hold this final state.
+
+CAMERA: Completely locked throughout. Zero camera movement. No zoom, no pan, no rotation.
+
+RING DETAILS: The three concentric rings maintain their colors throughout:
+- Outer: #A68200 (dark gold)  
+- Middle: #FFCF23 (bright yellow)
+- Inner: #146EEC (electric blue)
+Rings have a soft elliptical glow/shadow beneath the robot suggesting a reflective surface.
+
+EASING: All motion uses spring physics or cubic ease-in-out. Nothing is linear. The wake-up feels organic — like a living creature, not a mechanical switch.
+
+STYLE: Clean 3D animation. Same robot art style as reference images. Dark navy background (#1E293B) throughout. Color palette strictly: #FFCF23, #A68200, #146EEC, #1E293B.
+
+DURATION: 5 seconds total.
+ASPECT RATIO: 16:9.
+FRAME RATE: 60fps preferred, 30fps minimum.
+QUALITY: Maximum quality, no artifacts, smooth motion blur on fast movements only.</pre>
+      </div>
+      <div class="tip-row">
+        <div class="tip-dot"></div>
+        <span class="tip-text">ارفع Prompt A كـ start frame + Prompt B كـ end frame. Runway Gen-4 أو Kling 2.0 — ضبّط المدة على 5 ثواني.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="settings">
+    <div><div class="s-label">Image Generator</div><div class="s-val">Midjourney أو Ideogram 2 — 16:9، أعلى جودة، ارفع صورة الروبوت مع كل برومت</div></div>
+    <div><div class="s-label">Video Model</div><div class="s-val">Runway Gen-4 / Kling 2.0 — 5 ثواني، 16:9، max quality</div></div>
+    <div><div class="s-label">الترتيب الصح</div><div class="s-val">ولّد A → ولّد B → ارفع A+B كـ start/end في C</div></div>
+    <div><div class="s-label">نسخة Reverse</div><div class="s-val">اعكس الـ start/end: الروبوت صاحي يبدأ ينام — loop مثالي</div></div>
+  </div>
+
+  <div class="kbd-row">
+    <div class="kbd-hint"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> تبديل التابات</div>
+    <div class="kbd-hint"><kbd>C</kbd> كوبي البرومت الحالي</div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(i){
+  document.querySelectorAll('.panel').forEach((p,j)=>p.classList.toggle('active',i===j));
+  document.querySelectorAll('.tab-btn').forEach((b,j)=>b.classList.toggle('active',i===j));
+}
+function copyPrompt(i,btn){
+  navigator.clipboard.writeText(document.getElementById('text-'+i).textContent).then(()=>{
+    btn.classList.add('copied');
+    btn.innerHTML='✓ Copied!';
+    setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML='⧉ Copy';},2200);
+    launchConfetti();
+  });
+}
+document.addEventListener('keydown',e=>{
+  if(['1','2','3'].includes(e.key)) switchTab(+e.key-1);
+  if(e.key.toLowerCase()==='c'&&!e.metaKey&&!e.ctrlKey){
+    const i=[...document.querySelectorAll('.panel')].findIndex(p=>p.classList.contains('active'));
+    document.querySelector(`#panel-${i} .copy-btn`)?.click();
+  }
+});
+const cv=document.getElementById('confetti'),cx=cv.getContext('2d');
+let pts=[];
+function resize(){cv.width=innerWidth;cv.height=innerHeight;}resize();window.addEventListener('resize',resize);
+function launchConfetti(){
+  const cols=['#FFCF23','#146EEC','#A68200','#ffffff','#6daeff','#ffe57a'];
+  for(let i=0;i<120;i++) pts.push({x:Math.random()*cv.width,y:Math.random()*cv.height*.4,vx:(Math.random()-.5)*7,vy:Math.random()*4+1.5,r:Math.random()*5+2.5,c:cols[~~(Math.random()*cols.length)],a:1,rot:Math.random()*360,rv:(Math.random()-.5)*9});
+  if(pts.length>0) anim();
+}
+function anim(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  pts=pts.filter(p=>p.a>.01);
+  pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a-=.012;p.vy+=.09;p.rot+=p.rv;cx.save();cx.globalAlpha=p.a;cx.fillStyle=p.c;cx.translate(p.x,p.y);cx.rotate(p.rot*Math.PI/180);cx.fillRect(-p.r/2,-p.r/2,p.r,p.r*.4);cx.restore();});
+  if(pts.length>0)requestAnimationFrame(anim);
+}
+</script>
+</body>
+</html>

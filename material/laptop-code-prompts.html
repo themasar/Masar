@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Laptop Code Path — Scroll-Stop Prompts</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #02040a;
+    --surface: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --lime: #BFF549;
+    --blue: #5b8dee;
+    --purple: #9b72f5;
+    --text: #e8eaf6;
+    --muted: rgba(232,234,246,0.48);
+    --radius: 16px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Archivo', sans-serif; min-height: 100vh; overflow-x: hidden; position: relative; }
+
+  /* orbs */
+  .orb { position: fixed; border-radius: 50%; filter: blur(130px); opacity: 0.15; pointer-events: none; z-index: 0; animation: drift 18s ease-in-out infinite alternate; }
+  .orb-1 { width: 580px; height: 580px; background: #5b8dee; top: -180px; left: -120px; }
+  .orb-2 { width: 460px; height: 460px; background: #7c4dff; bottom: -120px; right: -80px; animation-delay: -7s; }
+  .orb-3 { width: 260px; height: 260px; background: #BFF549; top: 52%; left: 52%; opacity: 0.06; animation-delay: -13s; }
+  @keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(36px,28px) scale(1.08); } }
+
+  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(91,141,238,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(91,141,238,0.03) 1px, transparent 1px); background-size: 56px 56px; pointer-events: none; z-index: 0; }
+
+  .wrapper { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 60px 24px 80px; }
+
+  /* header */
+  .header { text-align: center; margin-bottom: 52px; }
+  .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(91,141,238,0.1); border: 1px solid rgba(91,141,238,0.25); border-radius: 999px; padding: 6px 16px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); margin-bottom: 28px; }
+  .badge::before { content: '◈'; font-size: 13px; }
+  .headline { font-family: 'Space Grotesk', sans-serif; font-size: clamp(40px, 7.5vw, 68px); font-weight: 700; line-height: 1; letter-spacing: -0.03em; }
+  .headline .l1 { color: var(--text); display: block; }
+  .headline .l2 { color: rgba(232,234,246,0.16); display: block; }
+  .subline { margin-top: 18px; color: var(--muted); font-size: 14px; line-height: 1.65; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+  /* code preview */
+  .code-preview { display: inline-flex; align-items: center; gap: 10px; background: rgba(91,141,238,0.07); border: 1px solid rgba(91,141,238,0.2); border-radius: 10px; padding: 10px 18px; margin-top: 18px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #a5c8ff; }
+  .code-cursor { display: inline-block; width: 2px; height: 14px; background: var(--blue); animation: blink 1.1s step-end infinite; vertical-align: middle; margin-left: 1px; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  /* tabs */
+  .tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 5px; margin-bottom: 20px; backdrop-filter: blur(12px); }
+  .tab-btn { flex: 1; padding: 12px 8px; background: transparent; border: none; border-radius: 10px; color: var(--muted); font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.05em; cursor: pointer; transition: all 0.22s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+  .tab-btn.active { background: linear-gradient(135deg, rgba(91,141,238,0.16), rgba(155,114,245,0.14)); border: 1px solid rgba(91,141,238,0.3); color: var(--blue); }
+  .tab-letter { display: inline-block; width: 22px; height: 22px; background: linear-gradient(135deg, var(--blue), var(--purple)); border-radius: 6px; font-size: 11px; line-height: 22px; text-align: center; margin-right: 7px; color: var(--bg); font-weight: 700; }
+  .tab-btn.active .tab-letter { background: var(--blue); }
+
+  /* panels */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* card */
+  .prompt-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); backdrop-filter: blur(18px); overflow: hidden; }
+  .card-header { display: flex; align-items: flex-start; justify-content: space-between; padding: 22px 24px 18px; border-bottom: 1px solid var(--border); gap: 16px; }
+  .card-label { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); margin-bottom: 4px; }
+  .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: var(--text); }
+  .card-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .copy-btn { flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: linear-gradient(135deg, rgba(91,141,238,0.12), rgba(155,114,245,0.1)); border: 1px solid rgba(91,141,238,0.28); border-radius: 10px; color: var(--blue); font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .copy-btn:hover { background: linear-gradient(135deg, rgba(91,141,238,0.22), rgba(155,114,245,0.2)); border-color: rgba(91,141,238,0.6); transform: translateY(-1px); box-shadow: 0 4px 18px rgba(91,141,238,0.15); }
+  .copy-btn.copied { background: linear-gradient(135deg, rgba(191,245,73,0.12), rgba(191,245,73,0.06)); border-color: rgba(191,245,73,0.5); color: var(--lime); }
+  .prompt-body { padding: 24px; }
+  .prompt-text { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.9; color: rgba(232,234,246,0.8); white-space: pre-wrap; word-break: break-word; user-select: all; }
+  .tip-row { display: flex; align-items: center; gap: 10px; padding: 12px 24px; background: rgba(91,141,238,0.04); border-top: 1px solid var(--border); }
+  .tip-dot { width: 6px; height: 6px; background: var(--blue); border-radius: 50%; flex-shrink: 0; }
+  .tip-text { font-size: 12px; color: var(--muted); }
+
+  /* settings */
+  .settings { margin-top: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; backdrop-filter: blur(12px); }
+  .s-label { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--purple); margin-bottom: 4px; }
+  .s-val { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* kbd */
+  .kbd-row { display: flex; gap: 16px; justify-content: center; margin-top: 26px; flex-wrap: wrap; }
+  .kbd-hint { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  kbd { background: var(--surface); border: 1px solid var(--border); border-radius: 5px; padding: 2px 7px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text); }
+
+  /* confetti */
+  #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 9999; }
+
+  @media (max-width: 580px) {
+    .tab-btn { font-size: 10px; padding: 9px 4px; }
+    .card-header { flex-direction: column; }
+    .copy-btn { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div class="wrapper">
+  <div class="header">
+    <div class="badge">Scroll-Stop Prompt Set</div>
+    <h1 class="headline">
+      <span class="l1">LAPTOP</span>
+      <span class="l2">CODE PATH</span>
+    </h1>
+    <p class="subline">Three linked prompts for a cinematic hero animation — laptop screen typing → code dissolves into a flowing neon path across the page.</p>
+    <div class="code-preview">
+      <span>function choosePath() {}</span><span class="code-cursor"></span>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" onclick="switchTab(0)"><span class="tab-letter">A</span>Hero Still Frame</button>
+    <button class="tab-btn" onclick="switchTab(1)"><span class="tab-letter">B</span>Path Transform Frame</button>
+    <button class="tab-btn" onclick="switchTab(2)"><span class="tab-letter">C</span>Video Animation</button>
+  </div>
+
+  <!-- PANEL A -->
+  <div class="panel active" id="panel-0">
+    <div class="prompt-card">
+      <div class="card-header">
+        <div>
+          <div class="card-label">Prompt A · Image Generator</div>
+          <div class="card-title">The Laptop — Hero Still Frame</div>
+          <div class="card-sub">Use as your video start frame / standalone hero still</div>
+        </div>
+        <button class="copy-btn" onclick="copyPrompt(0, this)">⧉ Copy</button>
+      </div>
+      <div class="prompt-body">
+        <pre class="prompt-text" id="text-0">Cinematic product photography still. A sleek modern laptop — thin-bezel design, brushed aluminum chassis, matte dark lid — sits centered in a 16:9 frame on an invisible surface. The laptop is open at roughly 110 degrees, screen facing the viewer.
+
+On the laptop screen: a minimal dark code editor interface (VS Code-style, pure #0D1117 background, no window chrome). A single line of code is displayed in the exact vertical and horizontal center of the screen:
+
+    function choosePath() {}
+
+Typography: monospace font (JetBrains Mono or similar), font size 18px equivalent, color #79b8ff (soft neon blue). The function keyword is color #f97583 (soft coral). The parentheses and braces are #e1e4e8 (near-white). A thin blinking text cursor (|) sits immediately after the closing brace — rendered as a glowing 2px white vertical bar.
+
+The screen emits a very soft blue-white glow that spills gently onto the keyboard and front bezel — subtle, not overblown. The overall ambient light comes from slightly above and left: diffused, soft, studio quality.
+
+Background: pure near-black (#080c14), no gradient, no texture. The laptop has a very faint reflection/shadow beneath it suggesting a dark matte surface.
+
+Style: premium tech product photography meets editorial. Minimal, clean, absolutely nothing in frame except the laptop. No logos, no stickers, no reflections of the photographer.
+
+Aspect ratio: 16:9. Shot on Hasselblad X2D 100C, 90mm lens, f/6.3, single large overhead softbox, subtle fill card on right. Ultra-sharp, 8K quality.</pre>
+      </div>
+      <div class="tip-row">
+        <div class="tip-dot"></div>
+        <span class="tip-text">Use Midjourney, Ideogram 2, or Flux 1.1 Pro — set aspect 16:9. Save this as your video start frame.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL B -->
+  <div class="panel" id="panel-1">
+    <div class="prompt-card">
+      <div class="card-header">
+        <div>
+          <div class="card-label">Prompt B · Image Generator</div>
+          <div class="card-title">The Path Transform — End Frame</div>
+          <div class="card-sub">Reference Prompt A's output for visual consistency</div>
+        </div>
+        <button class="copy-btn" onclick="copyPrompt(1, this)">⧉ Copy</button>
+      </div>
+      <div class="prompt-body">
+        <pre class="prompt-text" id="text-1">Cinematic digital composite. The same sleek laptop from the reference image — identical framing, identical angle, same ambient lighting. The laptop screen now shows the code editor with the line "function choosePath() {}" — but the text is mid-dissolve, mid-transformation.
+
+TRANSFORMATION STATE (freeze-frame at 40% completion):
+
+The characters of "function choosePath() {}" are simultaneously:
+1. Present on the laptop screen at ~60% opacity, softly glowing
+2. Escaping the screen plane — individual glyphs float outward, each becoming a tiny particle cluster that dissolves from sharp letterform into a soft orb of light, trailing micro-particles like sparks
+3. The particles merge into a continuous neon path line that begins at the screen's edge (right side, screen level) and extends rightward and slightly upward across the frame
+
+THE PATH LINE characteristics:
+- Width: 2px core, perfectly sharp
+- Color: gradient from electric blue (#4fc3f7) near the screen transitioning smoothly to violet (#9b72f5) at the far right
+- Glow: 3-layer — 2px bright core, 10px mid-glow, 40px wide soft outer halo
+- Path shape: a smooth Bezier curve, beginning horizontally, then arcing gently upward toward the right edge of frame
+- The path fades from 100% opacity near the screen to about 70% at the right frame edge
+
+Particle field: hundreds of tiny glowing particles (mix of blue, violet, near-white) float along and around the path trajectory, each with slight motion blur suggesting direction of travel.
+
+The laptop remains fully solid, photorealistic, unchanged. The code-to-path transformation happens entirely in the space between the screen surface and the right edge of frame.
+
+Background: same near-black (#080c14) as reference. The path's glow creates a faint illumination on the area around it.
+
+Aspect ratio: 16:9. Ultra-sharp rendering. 8K quality. Photorealism where the laptop exists, digital art where the path exists — seamless transition between the two.</pre>
+      </div>
+      <div class="tip-row">
+        <div class="tip-dot"></div>
+        <span class="tip-text">Upload Prompt A's output as reference image. This becomes your video end frame / the visual for section 2.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL C -->
+  <div class="panel" id="panel-2">
+    <div class="prompt-card">
+      <div class="card-header">
+        <div>
+          <div class="card-label">Prompt C · Video Model (Runway / Kling / Pika)</div>
+          <div class="card-title">Full Cinematic Animation — 12–15s Seamless Loop</div>
+          <div class="card-sub">Upload Prompt A as start frame, Prompt B as end frame</div>
+        </div>
+        <button class="copy-btn" onclick="copyPrompt(2, this)">⧉ Copy</button>
+      </div>
+      <div class="prompt-body">
+        <pre class="prompt-text" id="text-2">START FRAME: A sleek modern laptop, open at 110°, centered on a near-black background. The laptop screen shows a dark code editor with a single line of code: "function choosePath() {}" displayed in soft neon blue monospace font. A blinking cursor sits after the closing brace. Soft screen glow spills onto the keyboard. Perfectly still. Studio lighting.
+
+END FRAME: Same laptop, same position, same framing. The code text on screen is mid-dissolve — characters becoming particles. A continuous neon path line (blue-to-violet gradient, softly glowing) extends from the laptop screen's right edge across the full width of the frame in a smooth Bezier arc.
+
+ANIMATION SEQUENCE — execute precisely in this order:
+
+[0.0s – 0.5s] HOLD: Complete stillness. The laptop screen is on, code visible, cursor blinking at 1Hz. No motion whatsoever. Allow the viewer to read the code line.
+
+[0.5s – 3.5s] TYPING SEQUENCE: The code line types itself character by character, right-to-left erasure → re-typing simulation OR: begin with an empty cursor, type out "function choosePath() {}" one character at a time. Typing speed: deliberate and confident — approximately one character every 0.1–0.15 seconds. Each keystroke registers visually as a very subtle screen flicker (1–2% brightness pulse). The cursor advances with each character. Final character types at ~3.2s. Hold on completed line for 0.3s.
+
+[3.5s – 4.2s] LIFT-OFF INITIATION: The blinking cursor transforms — instead of blinking off, it stretches horizontally into a tiny glowing dash, then a 6px glowing dot. The dot begins a slow, smooth movement to the right along the baseline of the code text. As it moves, it leaves a hair-thin luminous trail behind it (the beginning of the path).
+
+[4.2s – 7.5s] CHARACTER DISSOLUTION: As the moving dot passes over each character from right to left, each glyph:
+  — Brightens briefly (0.1s)
+  — Fragments into 8–12 micro-particles that orbit momentarily
+  — Each particle accelerates outward, following the direction of the growing path
+  — The glyph's position on screen fades to empty
+The dissolution moves character-by-character, left to right through the word, taking ~3 seconds total. The path line simultaneously grows from the screen's right edge — each dissolved character feeds more luminous particles into the growing neon line.
+
+[7.5s – 10.0s] PATH EXTENSION: The neon path (now fully formed from the dissolved code) extends smoothly beyond the laptop screen, flowing rightward and slightly upward across the hero section in a cinematic Bezier arc. The path moves at a steady, graceful pace — like ink flowing through a very fine nib. The path's tip glows brightest (100%) while the section near the screen settles to ~70% opacity with a soft outer halo.
+
+PARALLAX NOTE: The path moves on a plane slightly in front of the background — a subtle 3D parallax effect of 8–12px suggests depth.
+
+[10.0s – 12.5s] PATH FADE AND RETURN: The path's far tip (right edge) begins to fade — opacity drops from 70% to 0% over ~2 seconds, moving inward toward the laptop screen like the path is being retracted. Simultaneously the path's glow reduces, blur increases slightly. The path retreats fully back into the screen area.
+
+[12.5s – 13.5s] RESET: The laptop screen shows an empty cursor, blinking. The single line begins typing again — seamless loop restart.
+
+CAMERA: Completely locked — zero camera movement throughout. No drift, no zoom, no shake. The only motion is the code typing, dissolution, and path animation.
+
+LIGHTING: No change in scene lighting. The path's glow casts a very faint blue-violet ambient light on the laptop's palm rest area — this should be subtle (3–5% brightness increase only).
+
+STYLE: Premium motion design. The laptop is photorealistic throughout. The code-to-path transformation feels like a real UI effect, not a visual effect. The path is elegant, not flashy. Think: Stripe / Linear / Vercel brand motion — confident, minimal, precise.
+
+TIMING: All easing is ease-in-out cubic. No linear motion. No abrupt transitions.
+DURATION: 13–14 seconds, seamless loop.
+ASPECT RATIO: 16:9.
+FRAME RATE: 60fps preferred, 24fps minimum.
+QUALITY: Maximum fidelity. No compression artifacts. Smooth particle rendering.</pre>
+      </div>
+      <div class="tip-row">
+        <div class="tip-dot"></div>
+        <span class="tip-text">Upload Prompt A as start frame + Prompt B as end frame. Works in Runway Gen-4, Kling 2.0, Pika 2.2. Set to 14s max duration.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="settings">
+    <div><div class="s-label">Image Generator</div><div class="s-val">Midjourney, Ideogram 2, Flux 1.1 Pro — 16:9, highest quality mode</div></div>
+    <div><div class="s-label">Video Model</div><div class="s-val">Runway Gen-4 / Kling 2.0 / Pika 2.2 — 14s, 16:9, max quality</div></div>
+    <div><div class="s-label">Workflow Order</div><div class="s-val">Generate A → reference it for B → upload both as start/end frames for C</div></div>
+    <div><div class="s-label">Reverse Version</div><div class="s-val">Swap start/end: the neon path assembles into code on the screen — equally cinematic</div></div>
+  </div>
+
+  <div class="kbd-row">
+    <div class="kbd-hint"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> Switch tabs</div>
+    <div class="kbd-hint"><kbd>C</kbd> Copy active prompt</div>
+  </div>
+</div>
+
+<script>
+function switchTab(i){
+  document.querySelectorAll('.panel').forEach((p,j)=>p.classList.toggle('active',i===j));
+  document.querySelectorAll('.tab-btn').forEach((b,j)=>b.classList.toggle('active',i===j));
+}
+function copyPrompt(i,btn){
+  navigator.clipboard.writeText(document.getElementById('text-'+i).textContent).then(()=>{
+    btn.classList.add('copied'); btn.textContent='✓ Copied!';
+    setTimeout(()=>{ btn.classList.remove('copied'); btn.innerHTML='⧉ Copy'; },2200);
+    launchConfetti();
+  });
+}
+document.addEventListener('keydown',e=>{
+  if(['1','2','3'].includes(e.key)) switchTab(+e.key-1);
+  if(e.key.toLowerCase()==='c'&&!e.metaKey&&!e.ctrlKey){
+    const i=[...document.querySelectorAll('.panel')].findIndex(p=>p.classList.contains('active'));
+    document.querySelector(`#panel-${i} .copy-btn`)?.click();
+  }
+});
+// confetti
+const cv=document.getElementById('confetti');
+const cx=cv.getContext('2d');
+let pts=[];
+function resize(){cv.width=innerWidth;cv.height=innerHeight;}
+resize();window.addEventListener('resize',resize);
+function launchConfetti(){
+  const cols=['#5b8dee','#9b72f5','#BFF549','#ffffff','#79b8ff','#f0f4ff'];
+  for(let i=0;i<110;i++) pts.push({x:Math.random()*cv.width,y:Math.random()*cv.height*.4,vx:(Math.random()-.5)*7,vy:Math.random()*4+1.5,r:Math.random()*5+2.5,c:cols[~~(Math.random()*cols.length)],a:1,rot:Math.random()*360,rv:(Math.random()-.5)*9});
+  if(pts.length>0) anim();
+}
+function anim(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  pts=pts.filter(p=>p.a>.01);
+  pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a-=.013;p.vy+=.09;p.rot+=p.rv;cx.save();cx.globalAlpha=p.a;cx.fillStyle=p.c;cx.translate(p.x,p.y);cx.rotate(p.rot*Math.PI/180);cx.fillRect(-p.r/2,-p.r/2,p.r,p.r*.4);cx.restore();});
+  if(pts.length>0) requestAnimationFrame(anim);
+}
+</script>
+</body>
+</html>

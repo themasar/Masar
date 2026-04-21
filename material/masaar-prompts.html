@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>مسار — Scroll-Stop Prompts</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #02040a;
+    --surface: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --lime: #BFF549;
+    --neon-blue: #4fc3f7;
+    --neon-purple: #b39ddb;
+    --text: #e8eaf6;
+    --muted: rgba(232,234,246,0.5);
+    --radius: 16px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Archivo', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ── Background orbs ── */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.18;
+    pointer-events: none;
+    z-index: 0;
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  .orb-1 { width: 600px; height: 600px; background: #4fc3f7; top: -200px; left: -150px; animation-delay: 0s; }
+  .orb-2 { width: 500px; height: 500px; background: #7c4dff; bottom: -150px; right: -100px; animation-delay: -6s; }
+  .orb-3 { width: 300px; height: 300px; background: #BFF549; top: 50%; left: 50%; animation-delay: -12s; opacity: 0.07; }
+  @keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(40px, 30px) scale(1.08); } }
+
+  /* ── Grid overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: linear-gradient(rgba(79,195,247,0.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(79,195,247,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Layout ── */
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 24px 80px;
+  }
+
+  /* ── Header ── */
+  .header { text-align: center; margin-bottom: 52px; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(79,195,247,0.1);
+    border: 1px solid rgba(79,195,247,0.25);
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--neon-blue);
+    margin-bottom: 28px;
+  }
+  .badge::before { content: '◈'; font-size: 14px; }
+  .headline {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(42px, 8vw, 72px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .headline .line1 { color: var(--text); display: block; }
+  .headline .line2 { color: rgba(232,234,246,0.18); display: block; }
+  .subline {
+    margin-top: 18px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .arabic-tag {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--neon-purple);
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: 0.02em;
+    opacity: 0.8;
+    direction: rtl;
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 5px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(12px);
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 12px 10px;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    color: var(--muted);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+  .tab-btn.active {
+    background: linear-gradient(135deg, rgba(79,195,247,0.15), rgba(124,77,255,0.15));
+    border: 1px solid rgba(79,195,247,0.3);
+    color: var(--neon-blue);
+  }
+  .tab-letter {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 22px;
+    text-align: center;
+    margin-right: 7px;
+    color: var(--bg);
+    font-weight: 700;
+  }
+  .tab-btn.active .tab-letter { background: var(--neon-blue); }
+
+  /* ── Prompt card ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .prompt-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(20px);
+    overflow: hidden;
+    position: relative;
+  }
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 22px 24px 18px;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+  .card-meta {}
+  .card-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--neon-blue);
+    margin-bottom: 4px;
+  }
+  .card-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .card-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .copy-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, rgba(79,195,247,0.12), rgba(124,77,255,0.12));
+    border: 1px solid rgba(79,195,247,0.3);
+    border-radius: 10px;
+    color: var(--neon-blue);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .copy-btn:hover {
+    background: linear-gradient(135deg, rgba(79,195,247,0.22), rgba(124,77,255,0.22));
+    border-color: rgba(79,195,247,0.6);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(79,195,247,0.15);
+  }
+  .copy-btn.copied {
+    background: linear-gradient(135deg, rgba(191,245,73,0.12), rgba(191,245,73,0.06));
+    border-color: rgba(191,245,73,0.5);
+    color: var(--lime);
+  }
+  .copy-icon { font-size: 15px; }
+  .prompt-body {
+    padding: 24px;
+  }
+  .prompt-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.85;
+    color: rgba(232,234,246,0.82);
+    white-space: pre-wrap;
+    word-break: break-word;
+    user-select: all;
+  }
+
+  /* ── Usage tip ── */
+  .tip-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: rgba(79,195,247,0.04);
+    border-top: 1px solid var(--border);
+  }
+  .tip-dot { width: 6px; height: 6px; background: var(--neon-blue); border-radius: 50%; flex-shrink: 0; }
+  .tip-text { font-size: 12px; color: var(--muted); }
+
+  /* ── Keyboard hints ── */
+  .kbd-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .kbd-hint { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  kbd {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text);
+  }
+
+  /* ── Settings strip ── */
+  .settings-strip {
+    margin-top: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    backdrop-filter: blur(12px);
+  }
+  .setting-item {}
+  .setting-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--neon-purple);
+    margin-bottom: 4px;
+  }
+  .setting-val { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* ── Confetti canvas ── */
+  #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 9999; }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .tab-btn { font-size: 11px; padding: 10px 6px; }
+    .card-header { flex-direction: column; }
+    .copy-btn { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div class="wrapper">
+  <!-- Header -->
+  <div class="header">
+    <div class="badge">Scroll-Stop Prompt Set</div>
+    <h1 class="headline">
+      <span class="line1">مسار</span>
+      <span class="line2">ANIMATION</span>
+    </h1>
+    <p class="subline">Three linked prompts for your cinematic tech education hero — image generator → video model → seamless loop.</p>
+    <span class="arabic-tag">«ارسم مسارك… وإحنا نوجّهك»</span>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" role="tab" onclick="switchTab(0)" id="tab-0">
+      <span class="tab-letter">A</span><span class="tab-full">Glowing Word</span>
+    </button>
+    <button class="tab-btn" role="tab" onclick="switchTab(1)" id="tab-1">
+      <span class="tab-letter">B</span><span class="tab-full">Network Expansion</span>
+    </button>
+    <button class="tab-btn" role="tab" onclick="switchTab(2)" id="tab-2">
+      <span class="tab-letter">C</span><span class="tab-full">Video Animation</span>
+    </button>
+  </div>
+
+  <!-- Panel A -->
+  <div class="panel active" id="panel-0">
+    <div class="prompt-card">
+      <div class="card-header">
+        <div class="card-meta">
+          <div class="card-label">Prompt A · Image Generator</div>
+          <div class="card-title">The Glowing Word — Static Hero Frame</div>
+          <div class="card-subtitle">Use as your start frame for the video, or as a standalone still</div>
+        </div>
+        <button class="copy-btn" onclick="copyPrompt(0, this)">
+          <span class="copy-icon">⧉</span> Copy
+        </button>
+      </div>
+      <div class="prompt-body">
+        <pre class="prompt-text" id="text-0">Cinematic digital illustration. Pure deep navy background (#0A0E1A), almost black. Dead center of a 16:9 frame: the Arabic word مسار rendered in a modern, clean geometric Kufi-inspired Arabic typeface — bold, architectural letterforms with sharp terminals and even stroke widths.
+
+The word glows in a vivid blue-to-purple neon gradient (#4FC3F7 → #7C4DFF), as if each letterform is an illuminated neon tube. The glow is layered: a tight 2px core of near-white light, a 12px mid-glow of electric blue, and a wide 60px outer aura of deep violet dissolving into the background.
+
+A single luminous white dot (diameter: 8px, with a 40px radial halo) sits at the end of the last letterform's stroke, as if it has just finished tracing the word. A gossamer neon path trail — 2px wide, blue-to-purple gradient, 60% opacity — traces back through the letterforms, following the natural calligraphic stroke order, as if the dot drew the word in one continuous motion.
+
+The entire scene is otherwise empty: no gradients on the background, no texture, no grid. The only light source is the word itself. Subtle chromatic aberration on the glow edges. Slight film grain overlay (2%).
+
+Aspect ratio: 16:9. Style: premium UI motion graphics still, Pentagram-level craft. Ultra-sharp, 8K quality.</pre>
+      </div>
+      <div class="tip-row">
+        <div class="tip-dot"></div>
+        <span class="tip-text">Paste into Midjourney, Ideogram, or Flux — set aspect ratio 16:9. Save this output as your video start frame.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel B -->
+  <div class="panel" id="panel-1">
+    <div class="prompt-card">
+      <div class="card-header">
+        <div class="card-meta">
+          <div class="card-label">Prompt B · Image Generator</div>
+          <div class="card-title">The Network Expansion — End Frame</div>
+          <div class="card-subtitle">Reference Prompt A's output for visual consistency</div>
+        </div>
+        <button class="copy-btn" onclick="copyPrompt(1, this)">
+          <span class="copy-icon">⧉</span> Copy
+        </button>
+      </div>
+      <div class="prompt-body">
+        <pre class="prompt-text" id="text-1">Cinematic digital illustration. Same deep navy background (#0A0E1A) as the reference image. The Arabic word مسار glows identically in the center — same geometric Kufi typeface, same blue-to-purple neon gradient (#4FC3F7 → #7C4DFF), same layered glow treatment.
+
+From the endpoints and key nodes of the word's letterforms, four branching paths extend outward across the frame like a neural network or tech roadmap diagram:
+
+BRANCH 1 (upper-left diagonal): A bright neon line extends toward the upper-left corner. At its terminus: a small frosted-glass pill label reading "Frontend" — Space Grotesk font, 14px, white text, glass-morphism background (rgba white 8%, 1px white border 15%, 8px border-radius, subtle blur).
+
+BRANCH 2 (upper-right diagonal): Identical neon line toward upper-right. Label: "Backend".
+
+BRANCH 3 (lower-left diagonal): Neon line lower-left. Label: "AI" — this branch glows slightly brighter, as if selected or active.
+
+BRANCH 4 (lower-right diagonal): Neon line lower-right. Label: "Mobile".
+
+Each branch line: 2px core, gradient from the word's node color outward, fading to 30% opacity at terminus. The lines have a very subtle curve (Bezier, not straight). Where each line meets its label, a small 5px glowing node dot pulses (implied by a slight radial glow).
+
+The luminous white dot from Prompt A now sits at the junction where the four branches split — the exact branching point — with a larger 80px aura indicating it has paused here.
+
+Background: a very faint geometric grid (#4FC3F7 at 3% opacity, 80px grid cells) visible behind everything, suggesting a coordinate system.
+
+Optional: ultra-faint outlines of more distant nodes and paths at 8% opacity extending beyond the four main branches, hinting at a larger invisible network.
+
+Aspect ratio: 16:9. Style: premium dark tech UI, Vercel / Linear design aesthetic. 8K quality.</pre>
+      </div>
+      <div class="tip-row">
+        <div class="tip-dot"></div>
+        <span class="tip-text">Upload Prompt A's output as an image reference for consistency. This becomes your video end frame.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel C -->
+  <div class="panel" id="panel-2">
+    <div class="prompt-card">
+      <div class="card-header">
+        <div class="card-meta">
+          <div class="card-label">Prompt C · Video Model (Runway / Kling / Pika)</div>
+          <div class="card-title">Cinematic Animation — 10–15s Seamless Loop</div>
+          <div class="card-subtitle">Upload Prompt A as start frame, Prompt B as end frame</div>
+        </div>
+        <button class="copy-btn" onclick="copyPrompt(2, this)">
+          <span class="copy-icon">⧉</span> Copy
+        </button>
+      </div>
+      <div class="prompt-body">
+        <pre class="prompt-text" id="text-2">START FRAME: Deep navy black screen. A single tiny luminous white dot (8px) appears at center frame with a soft radial glow — like a star igniting. Silence and stillness.
+
+END FRAME: The Arabic word مسار fully formed in neon blue-to-purple gradient light, with four branching neon paths extending to frosted-glass labels (Frontend, Backend, AI, Mobile) across the frame. A larger network of faint nodes and paths glows softly in the background.
+
+ANIMATION SEQUENCE — execute in exact order:
+
+[0.0s – 0.8s] EMERGENCE: Black screen. A single luminous dot appears at center with a slow bloom — opacity 0 to 100% over 0.4s, then glow radius expands from 4px to 40px over 0.4s. Ease-in-out. Hold.
+
+[0.8s – 4.5s] PATH DRAWING: The dot begins moving smoothly, leaving a glowing neon trail (2px line, blue-to-purple gradient). It traces the Arabic word مسار in correct right-to-left stroke order — following the natural calligraphic motion of each letterform. Speed: deliberate and confident, not rushed. Each completed stroke brightens slightly as if ink is setting. The total word takes ~3.5s to complete. Ease-in-out on direction changes.
+
+[4.5s – 5.5s] WORD REVEAL: The fully-traced word pulses once — a gentle wave of brightness rolls through the letterforms from right to left. The outer glow expands and contracts once, like a heartbeat. The dot holds position at the word's end point.
+
+[5.5s – 5.8s] BRANCH ANTICIPATION: The dot moves to the central branching junction of the word. A subtle circular ripple emits from it (like dropping a stone in water) — 3 concentric rings, neon blue, expanding outward, fading to 0 opacity. This signals the decision moment.
+
+[5.8s – 8.0s] BRANCH GROWTH: Four neon paths grow simultaneously from the junction, extending outward toward their destinations (upper-left, upper-right, lower-left, lower-right). The paths draw themselves like living vines — bezier curves, smooth, eased. As each path reaches its endpoint, the frosted-glass label card fades in (opacity 0 to 100%, scale 0.8 to 1.0, ease-out). The AI branch path pulses with slightly higher brightness.
+
+[8.0s – 8.6s] DOT DECISION: The dot pauses at junction. It emits one slow pulse of light. Then — it travels down the AI branch path, moving with confidence, leaving a brighter trail on that one branch.
+
+[8.6s – 10.5s] PATH TRANSFORMATION: As the dot moves along the AI branch, the path behind it subtly transforms — abstract code characters (monospace, #4FC3F7, 20% opacity) float upward from the path like embers, and faint UI wireframe elements (rounded rectangles, progress bars, data nodes) materialize briefly beside the path, then dissolve. The camera very slowly and imperceptibly zooms out (0.95x to 1.0x scale, ease-in-out) to reveal more of the growing network.
+
+[10.5s – 12.0s] NETWORK ZOOM: Camera continues slow zoom out. More distant nodes and branch paths become visible at low opacity (8–15%), suggesting a vast interconnected system growing from the word مسار.
+
+[12.0s – 13.5s] LOOP FADE: All branches, labels, and network paths gracefully fade — opacity reduces from 100% to 0% over 1.5s, flowing inward toward the word مسار like energy returning to its source. The word itself dims last. Only the glowing dot remains, growing slightly brighter as everything else fades.
+
+[13.5s – 14.0s] LOOP RESET: The word مسار fades to 0. The dot fades to 0. Screen is black for 0.3s. Then the dot re-emerges and the loop begins again seamlessly.
+
+CAMERA: Completely locked — zero camera movement except the subtle slow zoom during network reveal (max 5% zoom over 4 seconds). No shake, no drift.
+
+STYLE: Premium motion graphics. Linear, Vercel, Apple product video aesthetic. Every motion is eased — no linear or abrupt cuts. 
+LIGHTING: All light is emitted from the neon elements themselves. Background stays pure dark navy throughout.
+DURATION: 14 seconds, seamless loop.
+ASPECT RATIO: 16:9.
+FRAME RATE: 24fps minimum, 60fps preferred.
+QUALITY: Maximum fidelity, no artifacts, no compression blur.</pre>
+      </div>
+      <div class="tip-row">
+        <div class="tip-dot"></div>
+        <span class="tip-text">Upload Prompt A as start frame + Prompt B as end frame. Works in Runway Gen-4, Kling 2.0, or Pika 2.2. Set duration to 14s.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings strip -->
+  <div class="settings-strip">
+    <div class="setting-item">
+      <div class="setting-label">Image Generator</div>
+      <div class="setting-val">Midjourney, Ideogram 2, Flux 1.1 Pro — 16:9, highest quality</div>
+    </div>
+    <div class="setting-item">
+      <div class="setting-label">Video Model</div>
+      <div class="setting-val">Runway Gen-4 / Kling 2.0 / Pika 2.2 — 14s, 16:9, max quality</div>
+    </div>
+    <div class="setting-item">
+      <div class="setting-label">Pro Tip</div>
+      <div class="setting-val">Generate A first, reference it for B. Upload both as start/end frames in C.</div>
+    </div>
+    <div class="setting-item">
+      <div class="setting-label">Reverse Version</div>
+      <div class="setting-val">Swap start/end frames for a satisfying network→word assembly animation</div>
+    </div>
+  </div>
+
+  <!-- Keyboard hints -->
+  <div class="kbd-row">
+    <div class="kbd-hint"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> Switch tabs</div>
+    <div class="kbd-hint"><kbd>C</kbd> Copy active prompt</div>
+  </div>
+</div>
+
+<script>
+// ── Tab switching ──
+function switchTab(idx) {
+  document.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+}
+
+// ── Copy ──
+function copyPrompt(idx, btn) {
+  const text = document.getElementById('text-' + idx).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('copied');
+    btn.innerHTML = '<span class="copy-icon">✓</span> Copied!';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<span class="copy-icon">⧉</span> Copy';
+    }, 2200);
+    launchConfetti();
+  });
+}
+
+// ── Keyboard shortcuts ──
+document.addEventListener('keydown', e => {
+  if (['1','2','3'].includes(e.key)) switchTab(Number(e.key)-1);
+  if (e.key.toLowerCase() === 'c' && !e.metaKey && !e.ctrlKey) {
+    const activeIdx = [...document.querySelectorAll('.panel')].findIndex(p=>p.classList.contains('active'));
+    const btn = document.querySelector(`#panel-${activeIdx} .copy-btn`);
+    if (btn) btn.click();
+  }
+});
+
+// ── Confetti ──
+const canvas = document.getElementById('confetti');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+resize(); window.addEventListener('resize', resize);
+
+function launchConfetti() {
+  const colors = ['#4FC3F7','#7C4DFF','#BFF549','#b39ddb','#ffffff','#f8bbd0'];
+  for (let i=0; i<120; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height * 0.4,
+      vx: (Math.random()-0.5)*6,
+      vy: Math.random()*4+2,
+      r: Math.random()*5+3,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      alpha: 1,
+      rot: Math.random()*360,
+      rotV: (Math.random()-0.5)*8
+    });
+  }
+  if (particles.length > 120) animConfetti();
+}
+
+function animConfetti() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles = particles.filter(p => p.alpha > 0.01);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.alpha -= 0.012;
+    p.vy += 0.08; p.rot += p.rotV;
+    ctx.save();
+    ctx.globalAlpha = p.alpha;
+    ctx.fillStyle = p.color;
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot * Math.PI/180);
+    ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r * 0.4);
+    ctx.restore();
+  });
+  if (particles.length > 0) requestAnimationFrame(animConfetti);
+}
+</script>
+</body>
+</html>
