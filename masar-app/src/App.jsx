@@ -9,20 +9,37 @@ import CTASection from './components/CTASection';
 import Footer from './components/Footer';
 import { QuestionsFlow } from './components/QuestionsFlow';
 import AdminDashboard from './components/AdminDashboard';
+import AdminLogin from './components/AdminLogin';
 
 function App() {
   const [showQuestionsFlow, setShowQuestionsFlow] = useState(false);
-  const [currentRoute, setCurrentRoute] = useState(window.location.hash);
+  const [currentRoute, setCurrentRoute] = useState(window.location.pathname);
+  const [currentHash, setCurrentHash] = useState(window.location.hash);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const handleHashChange = () => {
-      setCurrentRoute(window.location.hash);
+    const handleLocationChange = () => {
+      setCurrentRoute(window.location.pathname);
+      setCurrentHash(window.location.hash);
     };
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+
+    // Listen for standard pushState and hash changes
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
   }, []);
 
-  if (currentRoute === '#admin') {
+  // Check if we are on the admin route (either /admin or #admin)
+  const isAdminRoute = currentRoute === '/admin' || currentHash === '#admin';
+
+  if (isAdminRoute) {
+    if (!isAuthenticated) {
+      return <AdminLogin onLoginSuccess={() => setIsAuthenticated(true)} />;
+    }
     return <AdminDashboard />;
   }
 

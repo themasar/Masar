@@ -56,7 +56,7 @@ const PreferencesCard = ({ questionData, answers, onUpdateAnswers, onNext, onPre
                   className={`
                     relative rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 border py-8 px-4
                     ${isSelected 
-                      ? 'border-[#146EEC] bg-[#146EEC]/10 shadow-[0_0_15px_rgba(20,110,236,0.1)]' 
+                      ? 'border-[#1D83CC] bg-[#1D83CC]/10 shadow-[0_0_15px_rgba(20,110,236,0.1)]' 
                       : 'border-[#1E293B] bg-transparent hover:border-[#334155] hover:bg-[#1E293B]/50'
                     }
                   `}
@@ -91,7 +91,7 @@ const PreferencesCard = ({ questionData, answers, onUpdateAnswers, onNext, onPre
                   className={`
                     relative rounded-xl flex items-center justify-between transition-all duration-300 border text-right px-6 py-5
                     ${isSelected 
-                      ? 'border-[#146EEC] bg-[#146EEC]/10 shadow-[0_0_15px_rgba(20,110,236,0.1)]' 
+                      ? 'border-[#1D83CC] bg-[#1D83CC]/10 shadow-[0_0_15px_rgba(20,110,236,0.1)]' 
                       : 'border-[#1E293B] bg-transparent hover:border-[#334155] hover:bg-[#1E293B]/50'
                     }
                   `}
@@ -123,7 +123,7 @@ const PreferencesCard = ({ questionData, answers, onUpdateAnswers, onNext, onPre
           className={`
             flex items-center justify-center px-10 py-3.5 rounded-xl font-bold transition-all duration-300
             ${!isNextDisabled 
-              ? 'bg-[#146EEC] text-white hover:bg-[#105bc5] hover:shadow-[0_0_15px_rgba(20,110,236,0.3)]' 
+              ? 'bg-[#1D83CC] text-white hover:bg-[#105bc5] hover:shadow-[0_0_15px_rgba(20,110,236,0.3)]' 
               : 'bg-[#1E293B] text-[#64748B] cursor-not-allowed'
             }
           `}

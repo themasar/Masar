@@ -36,7 +36,7 @@ const EmailInputStep = ({ onNext }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@domain.com"
-              className="w-full bg-[#101822] border border-[#1E293B] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#146EEC] focus:ring-1 focus:ring-[#146EEC] transition-colors"
+              className="w-full bg-[#101822] border border-[#1E293B] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#1D83CC] focus:ring-1 focus:ring-[#1D83CC] transition-colors"
               dir="ltr"
             />
             {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
@@ -44,7 +44,7 @@ const EmailInputStep = ({ onNext }) => {
 
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 bg-[#146EEC] text-white px-8 py-3.5 rounded-xl font-semibold transition-all duration-300 hover:bg-[#105bc5] hover:shadow-[0_0_15px_rgba(20,110,236,0.3)]"
+            className="w-full flex items-center justify-center gap-2 bg-[#1D83CC] text-white px-8 py-3.5 rounded-xl font-semibold transition-all duration-300 hover:bg-[#105bc5] hover:shadow-[0_0_15px_rgba(20,110,236,0.3)]"
           >
             <span>البدء</span>
             <HiOutlineChevronLeft className="w-5 h-5" />

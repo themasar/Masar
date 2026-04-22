@@ -53,20 +53,20 @@ const LoadingSequence = ({ onFinish }) => {
                 key={idx}
                 className={`
                   flex items-center justify-between p-4 rounded-xl border transition-all duration-500
-                  ${isCompleted ? 'bg-[#146EEC]/10 border-[#146EEC]/30' : ''}
+                  ${isCompleted ? 'bg-[#1D83CC]/10 border-[#1D83CC]/30' : ''}
                   ${isActive ? 'bg-[#1E293B] border-[#334155]' : ''}
                   ${isPending ? 'bg-transparent border-transparent opacity-50' : ''}
                 `}
               >
                 <div className="flex items-center gap-3">
                   {isCompleted ? (
-                    <HiOutlineCheckCircle className="w-6 h-6 text-[#146EEC]" />
+                    <HiOutlineCheckCircle className="w-6 h-6 text-[#1D83CC]" />
                   ) : isActive ? (
-                    <div className="w-6 h-6 rounded-full border-2 border-[#146EEC] border-t-transparent animate-spin" />
+                    <div className="w-6 h-6 rounded-full border-2 border-[#1D83CC] border-t-transparent animate-spin" />
                   ) : (
                     <div className="w-6 h-6 rounded-full border-2 border-[#1E293B]" />
                   )}
-                  <span className={`font-semibold ${isCompleted ? 'text-[#146EEC]' : isActive ? 'text-white' : 'text-[#64748B]'}`}>
+                  <span className={`font-semibold ${isCompleted ? 'text-[#1D83CC]' : isActive ? 'text-white' : 'text-[#64748B]'}`}>
                     {step.text}
                   </span>
                 </div>
@@ -77,7 +77,7 @@ const LoadingSequence = ({ onFinish }) => {
         
         {/* Progress Bar under steps */}
         <div className="text-center">
-            <span className="text-[#146EEC] font-bold block mb-2">{Math.round(progress)}% مكتمل</span>
+            <span className="text-[#1D83CC] font-bold block mb-2">{Math.round(progress)}% مكتمل</span>
         </div>
 
       </div>
