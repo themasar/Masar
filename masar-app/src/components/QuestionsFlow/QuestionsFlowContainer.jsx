@@ -4,6 +4,8 @@ import QuestionCard from './QuestionCard';
 import EmailInputStep from './EmailInputStep';
 import questionsDataRaw from '../../data/Questions.json';
 import { supabase } from '../../lib/supabase';
+import LoadingSequence from './LoadingSequence';
+import { HiOutlineChevronRight } from 'react-icons/hi2';
 
 // Map Questions.json into our format.
 // Questions.json array has { id, text, options: { A, B, C, D } }
@@ -79,6 +81,7 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
 
   const submitAssessment = async () => {
     setIsSubmitting(true);
+    const startTime = Date.now();
     
     // Format answers exactly as requested
     const formattedAnswers = {
@@ -163,6 +166,12 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
         dbId: insertedData?.[0]?.id || null
       };
 
+      // Ensure loading animation plays for at least 4 seconds
+      const elapsedTime = Date.now() - startTime;
+      if (elapsedTime < 4000) {
+        await new Promise(r => setTimeout(r, 4000 - elapsedTime));
+      }
+
       // 3. Complete Flow and pass result back
       onComplete(resultData);
 
@@ -232,9 +241,26 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
     return null;
   };
 
+  if (isSubmitting) {
+    return <LoadingSequence />;
+  }
+
   return (
-    <section className="min-h-[100dvh] bg-[#101822] flex flex-col justify-center pt-[20px] md:pt-[40px] pb-4 px-4 relative z-20">
-      <div className="w-full max-w-[650px] bg-[#101822] min-h-[400px] flex flex-col mx-auto relative z-30">
+    <section className="min-h-[100dvh] bg-[#061224] flex flex-col justify-center pt-[20px] md:pt-[40px] pb-4 px-4 relative z-20">
+      
+      {/* Absolute Back Button */}
+      <div className="absolute top-6 right-6 md:top-8 md:right-8 z-50 rtl:left-6 rtl:right-auto md:rtl:left-8 md:rtl:right-auto">
+        <div className="flex items-center gap-3 cursor-pointer group" onClick={handlePrev}>
+          <span className="text-[#94A3B8] font-bold text-sm md:text-base group-hover:text-white transition-colors">
+            {flowState === 'email' ? 'العودة للموقع' : 'السابق'}
+          </span>
+          <button className="w-10 h-10 rounded-full bg-[#1E293B] group-hover:bg-[#3B82F6] flex items-center justify-center transition-colors shadow-lg">
+            <HiOutlineChevronRight className="w-5 h-5 text-white" />
+          </button>
+        </div>
+      </div>
+
+      <div className="w-full max-w-[650px] bg-[#061224] min-h-[400px] flex flex-col mx-auto relative z-30">
         
         {flowState === 'email' && <EmailInputStep onNext={handleEmailSubmit} />}
         
@@ -251,42 +277,15 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
             />
 
             <div className="flex-grow mt-4">
-              {isSubmitting ? (
-                 <div className="flex flex-col items-center justify-center h-full min-h-[300px] gap-6">
-                   {/* Tech Animation */}
-                   <div className="relative w-28 h-28 flex items-center justify-center">
-                     {/* Outer spinning ring */}
-                     <div className="absolute inset-0 border-2 border-dashed border-[#1E293B] rounded-full animate-[spin_10s_linear_infinite]"></div>
-                     
-                     {/* Scanning line effect */}
-                     <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-[#3B82F6] shadow-[0_0_15px_#3B82F6] -translate-x-1/2 animate-scan"></div>
-                     
-                     {/* Center pulsing core */}
-                     <div className="w-14 h-14 bg-[#0F172A] border-2 border-[#3B82F6] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.3)] animate-pulse">
-                     </div>
-                     
-                     {/* Floating nodes */}
-                     <div className="absolute top-2 right-2 w-2.5 h-2.5 bg-[#60A5FA] rounded-full animate-ping"></div>
-                     <div className="absolute bottom-3 left-2 w-2 h-2 bg-[#F97316] rounded-full animate-pulse"></div>
-                     <div className="absolute top-1/2 -right-2 w-2 h-2 bg-[#BD00FF] rounded-full animate-bounce"></div>
-                   </div>
-
-                   <div className="text-center">
-                     <p className="text-white text-base font-bold mb-1.5">جاري تحليل إجاباتك وإعداد مسارك...</p>
-                     <p className="text-[#94A3B8] text-xs animate-pulse">نقوم بمطابقة مهاراتك مع أفضل المسارات التقنية</p>
-                   </div>
-                 </div>
-              ) : (
-                <QuestionCard 
-                  question={currentQuestion.question}
-                  options={currentQuestion.options}
-                  selectedOption={answers[currentQuestion.id]}
-                  onSelectOption={handleSelectOption}
-                  onNext={handleNext}
-                  onPrev={handlePrev}
-                  isLastQuestion={currentStepIndex === totalSteps - 1}
-                />
-              )}
+              <QuestionCard 
+                question={currentQuestion.question}
+                options={currentQuestion.options}
+                selectedOption={answers[currentQuestion.id]}
+                onSelectOption={handleSelectOption}
+                onNext={handleNext}
+                onPrev={handlePrev}
+                isLastQuestion={currentStepIndex === totalSteps - 1}
+              />
             </div>
           </>
         )}

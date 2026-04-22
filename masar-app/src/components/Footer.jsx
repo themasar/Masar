@@ -50,14 +50,11 @@ const Footer = () => {
               منصتك الذكية لاكتشاف المسار المهني وبناء مهاراتك بطريقة منظمة وموثوقة، خريطتك لمستقبل مشرق.
             </p>
             <div className="flex gap-3 justify-start">
-              <a href="#" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-light hover:bg-[#146EEC] hover:shadow-[0_0_15px_rgba(20,110,236,0.5)] hover:text-white transition-all duration-300">
+              <a href="https://www.facebook.com/profile.php?id=61572100627908" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-light hover:bg-[#146EEC] hover:shadow-[0_0_15px_rgba(20,110,236,0.5)] hover:text-white transition-all duration-300">
                 <FaFacebookF className="w-4 h-4" />
               </a>
-              <a href="#" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-light hover:bg-[#146EEC] hover:shadow-[0_0_15px_rgba(20,110,236,0.5)] hover:text-white transition-all duration-300">
+              <a href="https://www.linkedin.com/company/themasar-institute/" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-light hover:bg-[#146EEC] hover:shadow-[0_0_15px_rgba(20,110,236,0.5)] hover:text-white transition-all duration-300">
                 <FaLinkedinIn className="w-4 h-4" />
-              </a>
-              <a href="#" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-light hover:bg-[#146EEC] hover:shadow-[0_0_15px_rgba(20,110,236,0.5)] hover:text-white transition-all duration-300">
-                <FaInstagram className="w-4 h-4" />
               </a>
             </div>
           </motion.div>

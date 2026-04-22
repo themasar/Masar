@@ -17,7 +17,7 @@ const EmailInputStep = ({ onNext }) => {
 
   return (
     <div className="w-full flex flex-col h-full min-h-[400px] justify-center items-center">
-      <div className="w-full max-w-md bg-[#0B1120] border border-[#1E293B] rounded-3xl p-8 shadow-2xl">
+      <div className="w-full max-w-md bg-[#15243D] border border-[#1E293B] rounded-3xl p-8 shadow-2xl">
         <h2 className="text-white font-bold text-center mb-4 text-2xl">
           أهلاً بك في مسار!
         </h2>
@@ -36,7 +36,7 @@ const EmailInputStep = ({ onNext }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@domain.com"
-              className="w-full bg-[#101822] border border-[#1E293B] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#1D83CC] focus:ring-1 focus:ring-[#1D83CC] transition-colors"
+              className="w-full bg-[#061224] border border-[#1E293B] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] transition-colors"
               dir="ltr"
             />
             {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
@@ -44,7 +44,7 @@ const EmailInputStep = ({ onNext }) => {
 
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 bg-[#1D83CC] text-white px-8 py-3.5 rounded-xl font-semibold transition-all duration-300 hover:bg-[#105bc5] hover:shadow-[0_0_15px_rgba(20,110,236,0.3)]"
+            className="w-full flex items-center justify-center gap-2 bg-[#3B82F6] text-white px-8 py-3.5 rounded-xl font-semibold transition-all duration-300 hover:bg-[#2563EB] hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]"
           >
             <span>البدء</span>
             <HiOutlineChevronLeft className="w-5 h-5" />

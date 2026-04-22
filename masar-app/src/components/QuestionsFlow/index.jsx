@@ -9,7 +9,7 @@ export const QuestionsFlow = ({ onBackToMain }) => {
 
   const handleCompleteQuestions = (backendData) => {
     setAssessmentResult(backendData);
-    setPhase('loading');
+    setPhase('result');
   };
 
   const handleLoadingFinished = () => {

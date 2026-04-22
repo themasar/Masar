@@ -43,18 +43,18 @@ const QuestionCard = ({ question, questionSub, options, selectedOption, onSelect
               className={`
                 relative rounded-2xl flex flex-col transition-all duration-300 border-2 text-right items-start justify-center p-4 md:p-5
                 ${isSelected 
-                  ? 'border-[#1D83CC] bg-[#1D83CC]/10 shadow-[0_0_20px_rgba(20,110,236,0.3)] scale-[1.02] z-10' 
-                  : 'border-[#1E293B] bg-[#0B1120] hover:border-[#3B82F6]/50 hover:bg-[#1E293B]/50 hover:-translate-y-1 hover:shadow-lg'
+                  ? 'border-[#3B82F6] bg-[#3B82F6]/10 shadow-[0_0_20px_rgba(59,130,246,0.3)] scale-[1.02] z-10' 
+                  : 'border-[#1E293B] bg-[#15243D] hover:border-[#3B82F6]/50 hover:bg-[#1E293B]/50 hover:-translate-y-1 hover:shadow-lg'
                 }
               `}
             >
                <div className="flex flex-row items-center gap-3 w-full mb-2">
-                  <div className={`w-8 h-8 shrink-0 rounded-lg flex items-center justify-center text-base font-bold transition-colors ${isSelected ? 'bg-[#1D83CC] text-white' : 'bg-[#1E293B] text-[#94A3B8]'}`}>
+                  <div className={`w-8 h-8 shrink-0 rounded-lg flex items-center justify-center text-base font-bold transition-colors ${isSelected ? 'bg-[#3B82F6] text-white' : 'bg-[#1E293B] text-[#94A3B8]'}`}>
                     {key}
                   </div>
                </div>
                <div className="w-full">
-                  <h3 className={`font-semibold text-sm md:text-base leading-relaxed ${isSelected ? 'text-[#1D83CC]' : 'text-white'}`}>{option.text}</h3>
+                  <h3 className={`font-semibold text-sm md:text-base leading-relaxed ${isSelected ? 'text-[#3B82F6]' : 'text-white'}`}>{option.text}</h3>
                   {option.subText && <p className="text-[#94A3B8] text-xs mt-1">{option.subText}</p>}
                </div>
             </button>
@@ -63,14 +63,14 @@ const QuestionCard = ({ question, questionSub, options, selectedOption, onSelect
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex items-center justify-between mt-auto">
+      <div className="flex items-center justify-end mt-auto pt-4 border-t border-[#1E293B]/50">
         <button
           onClick={onNext}
           disabled={isNextDisabled}
           className={`
             flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold transition-all duration-300 text-sm md:text-base
             ${!isNextDisabled 
-              ? 'bg-[#1D83CC] text-white hover:bg-[#105bc5] hover:shadow-[0_0_15px_rgba(20,110,236,0.3)]' 
+              ? 'bg-[#3B82F6] text-white hover:bg-[#2563EB] hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]' 
               : 'bg-[#1E293B] text-[#64748B] cursor-not-allowed'
             }
           `}
@@ -78,16 +78,6 @@ const QuestionCard = ({ question, questionSub, options, selectedOption, onSelect
           <span>{isLastQuestion ? 'إرسال وعرض النتيجة' : 'التالي'}</span>
           <HiOutlineChevronLeft className="w-5 h-5" />
         </button>
-
-        {onPrev && (
-          <button
-            onClick={onPrev}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white font-semibold transition-all duration-300 hover:bg-[#1E293B] group text-sm md:text-base"
-          >
-            <HiOutlineChevronRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
-            <span>السابق</span>
-          </button>
-        )}
       </div>
     </div>
   );
