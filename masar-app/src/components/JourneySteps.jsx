@@ -77,14 +77,14 @@ export default function JourneySteps() {
   }, [images]);
 
   return (
-    <section className="relative w-full bg-[#101822]" style={{ marginTop: "100px", marginBottom: "120px" }}>
+    <section className="relative w-full bg-[#101822]" style={{ marginTop: "40px", marginBottom: "40px" }}>
       <div 
         ref={containerRef} 
         style={{ height: "300vh" }} 
         className="w-full relative"
       >
         <div 
-          className="sticky top-0 h-screen w-full overflow-hidden flex flex-col items-center justify-start bg-[#101822]"
+          className="sticky top-0 h-screen w-full overflow-hidden bg-[#101822] relative"
         >
           {/* Loading Indicator */}
           {loaded < FRAME_COUNT && (
@@ -96,23 +96,23 @@ export default function JourneySteps() {
             </div>
           )}
 
-          {/* Title Content - Positioned at the very top so it doesn't overlap video content */}
-          <div className="text-center px-4 z-20 shrink-0 w-full max-w-4xl pt-16 md:pt-24 mt-8 md:mt-0">
-             {/* Note: The video itself has an embedded title, so we keep this minimal and out of the way */}
-          </div>
 
-           {/* Canvas Animation Container */}
-          <div className="w-full relative flex-1 min-h-0 shrink-0 mt-4 pb-[10vh] flex items-center justify-center">
-            {/* Dark underlay gradient to bridge the video background and site background */}
+
+           {/* Canvas Animation Container - absolutely centered */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            {/* Dark underlay gradient */}
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#1A2533_0%,_transparent_60%)] z-0 opacity-50 pointer-events-none" />
             
             <canvas 
                ref={canvasRef} 
-               className="relative z-10 w-full h-full object-contain mx-auto pointer-events-none scale-110 md:scale-125 transform-gpu object-top"
+               className="relative z-10 pointer-events-none transform-gpu"
                style={{ 
-                 /* Aggressive CSS Mask to prevent any hard edges */
-                 WebkitMaskImage: "radial-gradient(ellipse at center, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 65%)",
-                 maskImage: "radial-gradient(ellipse at center, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 65%)",
+                 width: "100%",
+                 maxWidth: "700px",
+                 height: "auto",
+                 /* CSS Mask - wider on mobile to avoid clipping */
+                 WebkitMaskImage: "radial-gradient(ellipse at center, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 78%)",
+                 maskImage: "radial-gradient(ellipse at center, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 78%)",
                  filter: "contrast(1.02) brightness(1.05)" 
                }}
             />
