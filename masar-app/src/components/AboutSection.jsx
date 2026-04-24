@@ -12,24 +12,23 @@ const AboutSection = () => {
     <section
       id="about"
       className="relative overflow-hidden"
-      style={{ paddingTop: '80px', paddingBottom: '80px' }} /* Figma section: 508px total */
+      style={{ paddingTop: '32px', paddingBottom: '32px' }}
     >
       <div className="max-w-[1120px] mx-auto px-6"> {/* Figma: 1120px container */}
         <div className="grid lg:grid-cols-2 gap-16 items-center">
 
           {/* Left — isometric image */}
-          <div className="order-2 lg:order-1 relative flex justify-center lg:justify-start">
+          <div className="order-2 lg:order-2 relative flex justify-center lg:justify-start">
             <div className="absolute inset-0 bg-primary/5 rounded-full blur-[100px] z-0" />
             <img
               src="/images/about.png"
               alt="شاشات مسار"
-              className="w-full max-w-[550px] lg:max-w-[600px] relative z-10 hover:-translate-y-2 transition-transform duration-500 drop-shadow-2xl"
+              className="w-full relative z-10 hover:-translate-y-2 transition-transform duration-500 drop-shadow-2xl"
               draggable="false"
             />
           </div>
-
           {/* Right — Text & Checklist */}
-          <div className="order-1 lg:order-2 text-right">
+          <div className="order-1 lg:order-1 text-right">
             <h2 className="text-3xl lg:text-[40px] font-bold mb-6 bg-gradient-to-l from-[#FFCF23] to-[#A68200] bg-clip-text text-transparent inline-block">
               عن مسار
             </h2>

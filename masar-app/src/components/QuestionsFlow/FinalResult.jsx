@@ -196,19 +196,13 @@ const FinalResult = ({ onRestart, result }) => {
           >
             {/* Top Left Match Badge container */}
             <div className="absolute top-0 left-0 z-10">
-               {/* Decorative corner curve for badge */}
-               <div className="relative w-32 h-32 flex items-center justify-center rounded-br-[32px]  bg-[#101822] shadow-sm">
-                  <div className={`flex flex-col items-center justify-center w-32 h-32 rounded-tl-[20px] ${rec.badgeColor} text-white shadow-lg`}>
-                    <div className="flex items-center gap-0.5" dir="ltr">
-                      <span className="font-bold text-2xl leading-none">{rec.match}</span>
-                      <span className="text-2xl font-bold opacity-90">%</span>
-                    </div>
-                    <span className="text-lg font-bold mt-1">تطابق</span>
-                  </div>
+               <div className={`flex flex-col items-center justify-center w-[132px] h-[124px] rounded-br-[24px] ${rec.badgeColor} text-white shadow-[5px_5px_15px_rgba(0,0,0,0.2)]`}>
+                 <div className="flex items-center gap-0.5" dir="ltr">
+                   <span className="font-bold text-2xl leading-none">{rec.match}</span>
+                   <span className="text-2xl font-bold opacity-90">%</span>
+                 </div>
+                 <span className="text-lg font-bold mt-1">تطابق</span>
                </div>
-               {/* Border lines for the corner cut effect */}
-               <div className="absolute top-0 right-[-1px] w-[1px] h-32 bg-[#1E293B]"></div>
-               <div className="absolute bottom-[-1px] left-0 w-32 h-[1px] bg-[#1E293B]"></div>
             </div>
 
             <div className="p-6 md:p-8 flex flex-col h-full flex-grow text-right relative z-10">

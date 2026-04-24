@@ -80,7 +80,7 @@ export default function JourneySteps() {
     <section className="relative w-full bg-[#101822]" style={{ marginTop: "40px", marginBottom: "40px" }}>
       <div 
         ref={containerRef} 
-        style={{ height: "300vh" }} 
+        style={{ height: "1000vh" }} 
         className="w-full relative"
       >
         <div 
@@ -105,14 +105,14 @@ export default function JourneySteps() {
             
             <canvas 
                ref={canvasRef} 
-               className="relative z-10 pointer-events-none transform-gpu"
+               className="relative z-10 pointer-events-none transform-gpu mt-8 md:mt-16"
                style={{ 
                  width: "100%",
-                 maxWidth: "700px",
+                 maxWidth: "950px",
                  height: "auto",
-                 /* CSS Mask - wider on mobile to avoid clipping */
-                 WebkitMaskImage: "radial-gradient(ellipse at center, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 78%)",
-                 maskImage: "radial-gradient(ellipse at center, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 78%)",
+                 /* Smoother CSS Mask to perfectly blend the edges into the background */
+                 WebkitMaskImage: "radial-gradient(ellipse at center, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 75%)",
+                 maskImage: "radial-gradient(ellipse at center, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 75%)",
                  filter: "contrast(1.02) brightness(1.05)" 
                }}
             />

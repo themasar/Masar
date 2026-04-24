@@ -1,6 +1,6 @@
 import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi2';
 
-const QuestionCard = ({ question, questionSub, options, selectedOption, onSelectOption, isMultiSelect, onNext, onPrev, isLastQuestion, layout }) => {
+const QuestionCard = ({ question, questionSub, options, selectedOption, onSelectOption, isMultiSelect, onNext, onPrev, onBackToMain, isLastQuestion, layout }) => {
   // Determine if options is an array or object
   const optionsEntries = Array.isArray(options) 
     ? options.map(opt => [opt.id, opt]) 
@@ -63,12 +63,27 @@ const QuestionCard = ({ question, questionSub, options, selectedOption, onSelect
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex items-center justify-end mt-auto pt-4 border-t border-[#1E293B]/50">
+      <div className="flex flex-col-reverse sm:flex-row items-center justify-between mt-auto pt-4 border-t border-[#1E293B]/50 gap-4">
+        
+        {/* Right side buttons (Previous & Return to Main) */}
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+           {onPrev && (
+             <button
+               onClick={onPrev}
+               className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 text-sm md:text-base border border-[#1E293B] text-[#94A3B8] hover:bg-[#1E293B] hover:text-white"
+             >
+               <HiOutlineChevronRight className="w-5 h-5" />
+               <span>السابق</span>
+             </button>
+           )}
+        </div>
+
+        {/* Left side button (Next) */}
         <button
           onClick={onNext}
           disabled={isNextDisabled}
           className={`
-            flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold transition-all duration-300 text-sm md:text-base
+            w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-2.5 rounded-xl font-semibold transition-all duration-300 text-sm md:text-base
             ${!isNextDisabled 
               ? 'bg-[#3B82F6] text-white hover:bg-[#2563EB] hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]' 
               : 'bg-[#1E293B] text-[#64748B] cursor-not-allowed'

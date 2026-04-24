@@ -50,10 +50,10 @@ const Footer = () => {
               منصتك الذكية لاكتشاف المسار المهني وبناء مهاراتك بطريقة منظمة وموثوقة، خريطتك لمستقبل مشرق.
             </p>
             <div className="flex gap-3 justify-start">
-              <a href="https://www.facebook.com/profile.php?id=61572100627908" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-light hover:bg-[#146EEC] hover:shadow-[0_0_15px_rgba(20,110,236,0.5)] hover:text-white transition-all duration-300">
+              <a href="https://www.facebook.com/profile.php?id=61572100627908" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-light hover:bg-[#146EEC] hover:shadow-[0_0_15px_rgba(20,110,236,0.5)] hover:text-white transition-all duration-300">
                 <FaFacebookF className="w-4 h-4" />
               </a>
-              <a href="https://www.linkedin.com/company/themasar-institute/" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-light hover:bg-[#146EEC] hover:shadow-[0_0_15px_rgba(20,110,236,0.5)] hover:text-white transition-all duration-300">
+              <a href="https://www.linkedin.com/company/themasar-institute/" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-light hover:bg-[#146EEC] hover:shadow-[0_0_15px_rgba(20,110,236,0.5)] hover:text-white transition-all duration-300">
                 <FaLinkedinIn className="w-4 h-4" />
               </a>
             </div>
@@ -81,8 +81,8 @@ const Footer = () => {
           <motion.div variants={itemVariants}>
             <h4 className="text-white font-bold text-base mb-6">تواصل معنا</h4>
             <ul className="space-y-5">
-              <li><a href="#" className="text-gray-light hover:text-[#146EEC] hover:-translate-x-1 inline-block transition-all duration-300 text-sm">info@masar.sa</a></li>
-              <li><a href="#" className="text-gray-light hover:text-[#146EEC] hover:-translate-x-1 inline-block transition-all duration-300 text-sm direction-ltr">+966 000 000 00</a></li>
+              <li><a href="mailto:themasar.platform@gmail.com" className="text-gray-light hover:text-[#146EEC] hover:-translate-x-1 inline-block transition-all duration-300 text-sm break-all">themasar.platform@gmail.com</a></li>
+              <li><a href="tel:+201016741825" className="text-gray-light hover:text-[#146EEC] inline-block transition-all duration-300 text-sm" dir="ltr">+201016741825</a></li>
             </ul>
           </motion.div>
 

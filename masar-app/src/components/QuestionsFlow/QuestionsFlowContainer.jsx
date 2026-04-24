@@ -102,19 +102,19 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
         if (response.ok) {
           backendData = await response.json();
         } else {
-          console.warn("Backend API not reachable or returned an error. Using fallback.");
+          console.warn("Backend API returned an error: " + response.status);
         }
       } catch (err) {
-        console.warn("Backend fetch failed, using fallback data:", err);
+        console.error("Backend fetch failed:", err);
       }
 
-      // Mock backend response if API fails or placeholder is used
+      // Fallback data if API is down
       if (!backendData) {
         backendData = {
           "track": "AI",
           "confidence": {
-            "score": 0.46,
-            "label": "medium",
+            "score": 0.64,
+            "label": "high",
             "top_track": "AI",
             "second_track": "Backend"
           },
@@ -131,12 +131,12 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
             "pattern": 0.852
           },
           "scores": {
-            "AI": 0.4262,
+            "AI": 0.64,
             "Backend": 0.3438,
             "Frontend": 0.23
           },
           "explanation": [
-            "بناءً على إجاباتك، تفضل التفكير المنطقي والتحليل الدقيق للمشكلات.",
+            "بناءً على إجاباتك، تفضل التفكير المنطقي والتحليل الدقيق للمشكلات. (بيانات تجريبية)",
             "المسار الأول المقترح لك هو الذكاء الاصطناعي لتطابق مهاراتك التحليلية القوية.",
             "للنمو في هذا المسار، ستحتاج إلى تنمية قدرتك على التعامل مع الغموض والبيانات غير المكتملة."
           ]
@@ -203,6 +203,7 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
               onSelectOption={(opt) => handleSelectOption(opt)}
               onNext={handleNext}
               onPrev={handlePrev}
+              onBackToMain={onBackToMain}
               isLastQuestion={false}
             />
           </div>
@@ -232,6 +233,7 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
               onSelectOption={(opt) => handleSelectOption(opt)}
               onNext={handleNext}
               onPrev={handlePrev}
+              onBackToMain={onBackToMain}
               isLastQuestion={false}
             />
           </div>
@@ -248,11 +250,11 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
   return (
     <section className="min-h-[100dvh] bg-[#061224] flex flex-col justify-center pt-[20px] md:pt-[40px] pb-4 px-4 relative z-20">
       
-      {/* Absolute Back Button */}
+      {/* Absolute Main Menu Button */}
       <div className="absolute top-6 right-6 md:top-8 md:right-8 z-50 rtl:left-6 rtl:right-auto md:rtl:left-8 md:rtl:right-auto">
-        <div className="flex items-center gap-3 cursor-pointer group" onClick={handlePrev}>
+        <div className="flex items-center gap-3 cursor-pointer group" onClick={onBackToMain}>
           <span className="text-[#94A3B8] font-bold text-sm md:text-base group-hover:text-white transition-colors">
-            {flowState === 'email' ? 'العودة للموقع' : 'السابق'}
+            الرئيسية
           </span>
           <button className="w-10 h-10 rounded-full bg-[#1E293B] group-hover:bg-[#3B82F6] flex items-center justify-center transition-colors shadow-lg">
             <HiOutlineChevronRight className="w-5 h-5 text-white" />
@@ -284,6 +286,7 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
                 onSelectOption={handleSelectOption}
                 onNext={handleNext}
                 onPrev={handlePrev}
+                onBackToMain={onBackToMain}
                 isLastQuestion={currentStepIndex === totalSteps - 1}
               />
             </div>

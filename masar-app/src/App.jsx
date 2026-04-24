@@ -6,6 +6,7 @@ import JourneySteps from './components/JourneySteps';
 import AboutSection from './components/AboutSection';
 import WhyMasar from './components/WhyMasar';
 import CTASection from './components/CTASection';
+import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
 import { QuestionsFlow } from './components/QuestionsFlow';
 import AdminDashboard from './components/AdminDashboard';
@@ -55,6 +56,7 @@ function App() {
           <AboutSection />
           <WhyMasar />
           <CTASection onStartJourney={() => setShowQuestionsFlow(true)} />
+          <ContactSection />
         </main>
       ) : (
         <main>
