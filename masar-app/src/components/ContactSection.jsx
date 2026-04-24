@@ -8,6 +8,9 @@ const ContactSection = () => {
     email: '',
     message: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
+  const [statusMessage, setStatusMessage] = useState('');
 
   const socialLinks = [
     {
@@ -24,10 +27,37 @@ const ContactSection = () => {
     },
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const mailtoLink = `mailto:themasar.platform@gmail.com?subject=رسالة من ${formData.name}&body=البريد الإلكتروني: ${formData.email}%0D%0A%0D%0Aالرسالة:%0D%0A${formData.message}`;
-    window.location.href = mailtoLink;
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+    setStatusMessage('');
+
+    try {
+      const response = await fetch('https://masar-backend-production-a94e.up.railway.app/api/Email/send-message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setSubmitStatus('success');
+        setStatusMessage(data.message || 'تم إرسال رسالتك بنجاح، سنقوم بالرد عليك قريباً.');
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        setSubmitStatus('error');
+        setStatusMessage(data.message || 'حدث خطأ أثناء إرسال الرسالة. يرجى المحاولة مرة أخرى.');
+      }
+    } catch (error) {
+      setSubmitStatus('error');
+      setStatusMessage('حدث خطأ أثناء إرسال الرسالة. يرجى التأكد من اتصالك بالإنترنت والمحاولة مرة أخرى.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -87,10 +117,17 @@ const ContactSection = () => {
 
             <button
               type="submit"
-              className="w-full bg-[#9ebbe2] text-[#061224] font-bold text-lg rounded-[16px] py-4 mt-2 hover:bg-[#146EEC] transition-colors"
+              disabled={isSubmitting}
+              className={`w-full ${isSubmitting ? 'bg-[#9ebbe2]/50 cursor-not-allowed' : 'bg-[#9ebbe2] hover:bg-[#146EEC]'} text-[#061224] font-bold text-lg rounded-[16px] py-4 mt-2 transition-colors`}
             >
-              ارسال
+              {isSubmitting ? 'جاري الإرسال...' : 'ارسال'}
             </button>
+
+            {submitStatus && (
+              <div className={`text-center p-4 rounded-[16px] font-medium ${submitStatus === 'success' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
+                {statusMessage}
+              </div>
+            )}
           </form>
         </motion.div>
 
