@@ -50,7 +50,7 @@ const FeaturesCards = ({ onStartJourney }) => {
           className="text-center mb-16"
         >
           <h2 className="text-2xl md:text-3xl lg:text-[32px] font-bold text-white mb-4">
-            خطوتك الأولى نحو <span className="text-[#FFCF23] font-bold">احتراف مجالك</span> تبدأ من هنا
+            خطوتك الأولى نحو <span className="text-[#A68200] font-bold">احتراف مجالك</span> تبدأ من هنا
           </h2>
           <p className="text-[#94A3B8] text-base max-w-[650px] mx-auto leading-relaxed">
             مسار يساعدك على اكتشاف شغفك، وبناء خريطة طريق مخصصة لك، والوصول إلى الاحتراف من خلال رحلة تعليمية منظمة
@@ -76,7 +76,7 @@ const FeaturesCards = ({ onStartJourney }) => {
                 boxShadow: '0 10px 40px rgba(0,0,0,0.2)'
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.borderColor = '#FFCF23';
+                e.currentTarget.style.borderColor = '#A68200';
                 e.currentTarget.style.boxShadow = '0 10px 40px rgba(255,207,35,0.15)';
               }}
               onMouseLeave={e => {
@@ -85,11 +85,11 @@ const FeaturesCards = ({ onStartJourney }) => {
               }}
             >
               {/* Animated subtle tech line */}
-              <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#FFCF23] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#A68200] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
               <div
                 className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110"
-                style={{ background: '#FFCF23', color: '#FFFFFF' }}
+                style={{ background: '#A68200', color: '#FFFFFF' }}
               >
                 {card.icon}
               </div>
