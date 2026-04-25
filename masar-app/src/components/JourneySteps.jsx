@@ -92,26 +92,26 @@ export default function JourneySteps() {
 
           {/* Main content */}
           <div
-            className="relative w-full max-w-2xl mx-auto flex flex-col items-center px-6 py-16"
+            className="relative w-full max-w-4xl mx-auto flex flex-col items-center px-6 py-16"
             style={{ gap: 0 }}
           >
             {/* Title frame */}
-            <div className="relative w-full mb-8" style={{ maxWidth: "560px" }}>
+            <div className="relative w-full mb-10" style={{ maxWidth: "800px" }}>
               <img src={IMAGES.titleFrame} alt="" className="w-full h-auto" draggable={false} />
             </div>
 
             {/* Two cards side by side */}
             <div
-              className="relative w-full flex justify-between items-start mb-4"
-              style={{ Width: "100%" }}
+              className="relative w-full flex justify-between items-start mb-6"
+              style={{ width: "100%", maxWidth: "850px" }}
             >
               {/* Right card - slides in from right */}
-              <div ref={cardRightRef} className="card-right relative" style={{ width: "47%" }}>
+              <div ref={cardRightRef} className="card-right relative" style={{ width: "48%" }}>
                 <img src={IMAGES.cardBeige} alt="" className="w-full h-auto" draggable={false} />
               </div>
 
               {/* Left card - slides in from left */}
-              <div ref={cardLeftRef} className="card-left relative" style={{ width: "47%" }}>
+              <div ref={cardLeftRef} className="card-left relative" style={{ width: "48%" }}>
                 <img src={IMAGES.cardYellow} alt="" className="w-full h-auto" draggable={false} />
               </div>
             </div>

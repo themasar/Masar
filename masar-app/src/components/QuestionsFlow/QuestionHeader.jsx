@@ -1,7 +1,7 @@
 import { HiOutlineChevronRight } from 'react-icons/hi2';
 
 const QuestionHeader = ({ currentStep, totalSteps, onBack, titleOverride, subtitleOverride, hideProgressLine }) => {
-  const progressPercentage = (currentStep / totalSteps) * 100;
+  const progressPercentage = ((currentStep - 1) / totalSteps) * 100;
 
   return (
     <div className="w-full">
