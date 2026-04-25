@@ -30,42 +30,6 @@ const TRACK_DETAILS = {
     skills_count: '5 مهارات',
     tags: ['Machine Learning', 'Python', 'Data Science', 'Deep Learning'],
   },
-  "UI/UX": {
-    title: 'تصميم تجربة المستخدم (UI/UX)',
-    matchColor: 'from-[#22C55E]/20 to-transparent',
-    badgeColor: 'bg-[#22C55E]',
-    description: 'تعلم كيفية إنشاء تصاميم تتمحور حول المستخدم تحل المشاكل الحقيقية وتسعد المستخدمين.',
-    duration: '6-8 أشهر',
-    skills_count: '5 مهارات',
-    tags: ['اختبار قابلية الاستخدام', 'تصميم الواجهات', 'النماذج الأولية', 'الإطارات الشبكية', 'بحث المستخدم'],
-  },
-  "Cybersecurity": {
-    title: 'الأمن السيبراني',
-    matchColor: 'from-[#F97316]/20 to-transparent',
-    badgeColor: 'bg-[#F97316]',
-    description: 'تعلم التصدي للهجمات واكتشاف الثغرات وتأمين الأنظمة وتطبيق أفضل الممارسات.',
-    duration: '12-16 أشهر',
-    skills_count: '5 مهارات',
-    tags: ['أمن الشبكات', 'اختبار الاختراق', 'التشفير', 'تحليل المخاطر'],
-  },
-  "Data Analysis": {
-    title: 'تحليل البيانات',
-    matchColor: 'from-[#22C55E]/20 to-transparent',
-    badgeColor: 'bg-[#22C55E]',
-    description: 'حول البيانات الخام إلى رؤى قابلة للتنفيذ باستخدام أدوات وتقنيات تحليلية.',
-    duration: '7-9 أشهر',
-    skills_count: '5 مهارات',
-    tags: ['التحليل الإحصائي', 'تصور البيانات', 'Python', 'SQL', 'Excel'],
-  },
-  "Default": {
-    title: 'المسار التقني الشامل',
-    matchColor: 'from-[#3B82F6]/20 to-transparent',
-    badgeColor: 'bg-[#3B82F6]',
-    description: 'ابنِ أساساً قوياً في التكنولوجيا لتبدأ رحلتك المهنية بمرونة عالية.',
-    duration: '6-12 أشهر',
-    skills_count: 'مهارات متعددة',
-    tags: ['Problem Solving', 'Programming', 'System Basics'],
-  }
 };
 
 const FinalResult = ({ onRestart, result }) => {
@@ -77,13 +41,14 @@ const FinalResult = ({ onRestart, result }) => {
   // Extract top 1 score from backend result
   let topTracks = [];
   if (result?.confidence?.top_track) {
-    const matchScore = result.confidence.score !== undefined 
-      ? Math.round(result.confidence.score * 100)
-      : (result.scores ? Math.round(result.scores[result.confidence.top_track] * 100) : 0);
+    const trackKey = result.confidence.top_track;
+    const matchScore = result.scores?.[trackKey] !== undefined
+      ? Math.round(result.scores[trackKey] * 100)
+      : (result.confidence.score !== undefined ? Math.round(result.confidence.score * 100) : 0);
       
     topTracks = [
       { 
-        trackKey: result.confidence.top_track, 
+        trackKey, 
         score: matchScore
       }
     ];
@@ -150,10 +115,6 @@ const FinalResult = ({ onRestart, result }) => {
     'تطوير واجهات المستخدم (Frontend)',
     'تطوير الواجهات الخلفية (Backend)',
     'الذكاء الاصطناعي (AI)',
-    'تصميم تجربة المستخدم (UI/UX)',
-    'الأمن السيبراني',
-    'تحليل البيانات',
-    'غير ذلك'
   ];
 
   return (
