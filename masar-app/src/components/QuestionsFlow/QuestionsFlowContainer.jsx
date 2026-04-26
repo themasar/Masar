@@ -83,7 +83,7 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
   const submitAssessment = async () => {
     setIsSubmitting(true);
     const startTime = Date.now();
-    
+
     // Format answers: send only question answers (keys "1"-"12"), exclude pre-questions
     const questionAnswersOnly = {};
     for (const [key, value] of Object.entries(answers)) {
@@ -91,14 +91,18 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
         questionAnswersOnly[key] = value;
       }
     }
+    // const formattedAnswers = {
+    //   answers: questionAnswersOnly
+    // };
     const formattedAnswers = {
-      answers: questionAnswersOnly
+      answers: questionAnswersOnly,
+      pre1: answers.pre1,
+      pre2: answers.pre2 || null
     };
-
     try {
       // 1. Send to Backend API
       const backendUrl = import.meta.env.VITE_BACKEND_API_URL || 'https://masar-backend-production-a94e.up.railway.app/api/Recommend';
-      
+
       const response = await fetch(backendUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -164,7 +168,7 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
             hideProgressLine={true}
           />
           <div className="flex-grow mt-4">
-            <QuestionCard 
+            <QuestionCard
               question="هل محدد تراك معين بالفعل ؟"
               options={{ "A": "نعم، حددت تراك", "B": "لا، لسه بكتشف" }}
               selectedOption={answers.pre1}
@@ -178,7 +182,7 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
         </>
       );
     }
-    
+
     if (flowState === 'pre2') {
       return (
         <>
@@ -191,7 +195,7 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
             hideProgressLine={true}
           />
           <div className="flex-grow mt-4">
-            <QuestionCard 
+            <QuestionCard
               question="اختيارك ده كان بناء علي ايه ؟"
               options={{
                 "A": "جربته وبدأت فيه فعلاً",
@@ -243,7 +247,7 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
 
   return (
     <section className="min-h-[100dvh] bg-[#061224] flex flex-col justify-center pt-[20px] md:pt-[40px] pb-4 px-4 relative z-20">
-      
+
       {/* Absolute Main Menu Button */}
       <div className="absolute top-6 right-6 md:top-8 md:right-8 z-50 rtl:left-6 rtl:right-auto md:rtl:left-8 md:rtl:right-auto">
         <div className="flex items-center gap-3 cursor-pointer group" onClick={onBackToMain}>
@@ -257,9 +261,9 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
       </div>
 
       <div className="w-full max-w-[650px] bg-[#061224] min-h-[400px] flex flex-col mx-auto relative z-30">
-        
+
         {flowState === 'email' && <EmailInputStep onNext={handleEmailSubmit} />}
-        
+
         {(flowState === 'pre1' || flowState === 'pre2') && renderPreQuestions()}
 
         {flowState === 'questions' && (
@@ -273,7 +277,7 @@ const QuestionsFlowContainer = ({ onBackToMain, onComplete }) => {
             />
 
             <div className="flex-grow mt-4">
-              <QuestionCard 
+              <QuestionCard
                 question={currentQuestion.question}
                 options={currentQuestion.options}
                 selectedOption={answers[currentQuestion.id]}

@@ -32,11 +32,14 @@ const TRACK_DETAILS = {
   },
 };
 
+
+
 const FinalResult = ({ onRestart, result }) => {
   const [feedback, setFeedback] = useState(null); // 'suitable', 'not_sure', 'unsuitable'
   const [suggestedTrack, setSuggestedTrack] = useState('');
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState('');
 
   // Extract top 1 score from backend result
   let topTracks = [];
@@ -93,13 +96,14 @@ const FinalResult = ({ onRestart, result }) => {
 
     setIsSubmittingFeedback(true);
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('user_assessments')
         .update({
           user_feedback: fbValue,
-          user_suggested_track: trackValue
+          user_suggested_track: trackValue,
+          user_rejection_reason: trackValue === 'غير ذلك' ? rejectionReason : null
         })
-        .eq('id', result.dbId);
+        .eq('id', result.dbId).select();
 
       if (error) console.error('Error updating feedback:', error);
 
@@ -115,6 +119,7 @@ const FinalResult = ({ onRestart, result }) => {
     'تطوير واجهات المستخدم (Frontend)',
     'تطوير الواجهات الخلفية (Backend)',
     'الذكاء الاصطناعي (AI)',
+    'غير ذلك',
   ];
 
   return (
@@ -194,10 +199,25 @@ const FinalResult = ({ onRestart, result }) => {
               )}
 
               {/* Card CTA */}
-              <div className="mt-auto pt-2">
-                <button className="w-full bg-[#3B82F6] hover:bg-[#2563EB] text-white py-3 rounded-xl font-bold text-sm md:text-base transition-colors">
+              {/* <div className="mt-auto pt-2">
+                <button
+                  disabled
+                  title="قريباً"
+                  className="w-full bg-[#1E293B] text-[#64748B] py-3 rounded-xl font-bold text-sm md:text-base cursor-not-allowed"
+                >
                   عرض خارطة الطريق
                 </button>
+              </div> */}
+              <div className="mt-auto pt-2 relative group">
+                <button
+                  disabled
+                  className="w-full bg-[#1E293B] text-[#64748B] py-3 rounded-xl font-bold text-sm md:text-base cursor-not-allowed"
+                >
+                  عرض خارطة الطريق
+                </button>
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-[#1E293B] text-white text-base px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                  قريباً
+                </div>
               </div>
 
             </div>
@@ -241,14 +261,26 @@ const FinalResult = ({ onRestart, result }) => {
                       key={idx}
                       onClick={() => setSuggestedTrack(track)}
                       className={`px-4 py-2.5 rounded-xl border transition-colors text-sm font-bold ${suggestedTrack === track
-                          ? 'bg-[#3B82F6] border-[#3B82F6] text-white'
-                          : 'bg-[#101822] border-[#1E293B] text-[#94A3B8] hover:border-[#3B82F6]'
+                        ? 'bg-[#3B82F6] border-[#3B82F6] text-white'
+                        : 'bg-[#101822] border-[#1E293B] text-[#94A3B8] hover:border-[#3B82F6]'
                         }`}
                     >
                       {track}
                     </button>
                   ))}
                 </div>
+
+                {suggestedTrack === 'غير ذلك' && (
+                  <textarea
+                    value={rejectionReason}
+                    onChange={(e) => setRejectionReason(e.target.value)}
+                    placeholder="اكتب سبب عدم المناسبة..."
+                    rows={3}
+                    className="w-full bg-[#101822] border border-[#1E293B] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#3B82F6] resize-none mb-4"
+                    dir="rtl"
+                  />
+                )}
+
                 <div className="flex gap-3 w-full">
                   <button
                     onClick={handleTrackSuggestSubmit}
@@ -280,14 +312,25 @@ const FinalResult = ({ onRestart, result }) => {
 
       {/* Global CTA */}
       <div className="w-full max-w-[600px] flex items-center justify-between border-t border-[#1E293B] pt-6 flex-col sm:flex-row gap-4 mb-10">
-        <button className="w-full sm:w-auto bg-[#1E293B] hover:bg-[#334155] text-white py-3 px-8 rounded-xl font-bold transition-colors order-2 sm:order-1 text-sm">
+        {/* <button className="w-full sm:w-auto bg-[#1E293B] hover:bg-[#334155] text-white py-3 px-8 rounded-xl font-bold transition-colors order-2 sm:order-1 text-sm">
           تصفح كل المسارات
-        </button>
+        </button> */}
+        <div className="relative group w-full sm:w-auto order-2 sm:order-1">
+          <button
+            disabled
+            className="w-full sm:w-auto bg-[#1E293B] text-[#64748B] py-3 px-8 rounded-xl font-bold cursor-not-allowed transition-colors text-sm"
+          >
+            تصفح كل المسارات
+          </button>
+          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-[#1E293B] text-white text-base px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+            قريباً
+          </div>
+        </div>
 
-        <div className="text-right order-1 sm:order-2">
+        {/* <div className="text-right order-1 sm:order-2">
           <h3 className="text-white font-bold text-lg mb-1">غير متأكد من النتيجة؟</h3>
           <p className="text-[#94A3B8] text-xs md:text-sm">يمكنك دائماً البدء بمسار وتغييره لاحقاً</p>
-        </div>
+        </div> */}
       </div>
 
     </div>
