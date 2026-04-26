@@ -96,14 +96,14 @@ const FinalResult = ({ onRestart, result }) => {
 
     setIsSubmittingFeedback(true);
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('user_assessments')
         .update({
           user_feedback: fbValue,
           user_suggested_track: trackValue,
           user_rejection_reason: trackValue === 'غير ذلك' ? rejectionReason : null
         })
-        .eq('id', result.dbId).select();
+        .eq('id', result.dbId);
 
       if (error) console.error('Error updating feedback:', error);
 
