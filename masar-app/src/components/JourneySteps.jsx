@@ -119,7 +119,7 @@ export default function JourneySteps() {
             {/* Robot + rings */}
             <div
               className="relative flex items-center justify-center"
-              style={{ width: "100%"}}
+              style={{ width: "100%" }}
             >
               {/* Rings */}
               <div

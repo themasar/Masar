@@ -42,35 +42,35 @@ const FinalResult = ({ onRestart, result }) => {
   let topTracks = [];
   if (result?.confidence?.top_track) {
     const trackKey = result.confidence.top_track;
-    const matchScore = result.scores?.[trackKey] !== undefined
-      ? Math.round(result.scores[trackKey] * 100)
-      : (result.confidence.score !== undefined ? Math.round(result.confidence.score * 100) : 0);
-      
+    const matchScore = result.confidence?.score !== undefined
+      ? Math.round(result.confidence.score * 100)
+      : 0;
+
     topTracks = [
-      { 
-        trackKey, 
+      {
+        trackKey,
         score: matchScore
       }
     ];
   } else if (result?.scores) {
     topTracks = Object.entries(result.scores)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 1)
-        .map(([trackKey, score]) => ({
-           trackKey,
-           score: Math.round(score * 100)
-        }));
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 1)
+      .map(([trackKey, score]) => ({
+        trackKey,
+        score: Math.round(score * 100)
+      }));
   }
 
-  const recommendations = topTracks.length > 0 
+  const recommendations = topTracks.length > 0
     ? topTracks.map(t => ({
-        ...(TRACK_DETAILS[t.trackKey] || TRACK_DETAILS["Default"]),
-        match: t.score.toString(),
-        title: TRACK_DETAILS[t.trackKey] ? TRACK_DETAILS[t.trackKey].title : t.trackKey,
-      }))
+      ...(TRACK_DETAILS[t.trackKey] || TRACK_DETAILS["Default"]),
+      match: t.score.toString(),
+      title: TRACK_DETAILS[t.trackKey] ? TRACK_DETAILS[t.trackKey].title : t.trackKey,
+    }))
     : [
-        { ...TRACK_DETAILS["UI/UX"], match: '95' }
-      ];
+      { ...TRACK_DETAILS["UI/UX"], match: '95' }
+    ];
 
   const handleFeedbackSubmit = async (selectedFeedback) => {
     setFeedback(selectedFeedback);
@@ -100,9 +100,9 @@ const FinalResult = ({ onRestart, result }) => {
           user_suggested_track: trackValue
         })
         .eq('id', result.dbId);
-        
+
       if (error) console.error('Error updating feedback:', error);
-      
+
       setFeedbackSubmitted(true);
     } catch (err) {
       console.error('Error updating feedback:', err);
@@ -119,10 +119,10 @@ const FinalResult = ({ onRestart, result }) => {
 
   return (
     <div className="w-full max-w-5xl mx-auto py-6 px-4 flex flex-col items-center justify-center min-h-[100dvh] animate-fade-in relative z-20">
-      
+
       {/* Header Back Button */}
       <div className="w-full flex items-center justify-start absolute top-6 right-6 rtl:left-auto rtl:right-6">
-        <button 
+        <button
           onClick={onRestart}
           className="flex items-center gap-2 text-white hover:text-[#94A3B8] transition-colors font-bold text-sm"
         >
@@ -139,7 +139,7 @@ const FinalResult = ({ onRestart, result }) => {
           <span>التحليل مكتمل</span>
           <HiOutlineCheckCircle className="w-4 h-4" />
         </div>
-        
+
         <h1 className="text-2xl md:text-4xl font-bold text-white mb-2 tracking-wide">
           المسار المهني الموصى به لك
         </h1>
@@ -151,23 +151,23 @@ const FinalResult = ({ onRestart, result }) => {
       {/* Result Cards Grid */}
       <div className="flex justify-center w-full max-w-[600px] mb-8 mx-auto">
         {recommendations.map((rec, index) => (
-          <div 
+          <div
             key={index}
             className="w-full relative border border-[#1E293B] rounded-[24px] bg-[#0B1120] overflow-hidden flex flex-col hover:border-[#334155] transition-all duration-300 shadow-xl"
           >
             {/* Top Left Match Badge container */}
             <div className="absolute top-0 left-0 z-10">
-               <div className={`flex flex-col items-center justify-center w-[132px] h-[124px] rounded-br-[24px] ${rec.badgeColor} text-white shadow-[5px_5px_15px_rgba(0,0,0,0.2)]`}>
-                 <div className="flex items-center gap-0.5" dir="ltr">
-                   <span className="font-bold text-2xl leading-none">{rec.match}</span>
-                   <span className="text-2xl font-bold opacity-90">%</span>
-                 </div>
-                 <span className="text-lg font-bold mt-1">تطابق</span>
-               </div>
+              <div className={`flex flex-col items-center justify-center w-[132px] h-[124px] rounded-br-[24px] ${rec.badgeColor} text-white shadow-[5px_5px_15px_rgba(0,0,0,0.2)]`}>
+                <div className="flex items-center gap-0.5" dir="ltr">
+                  <span className="font-bold text-2xl leading-none">{rec.match}</span>
+                  <span className="text-2xl font-bold opacity-90">%</span>
+                </div>
+                <span className="text-lg font-bold mt-1">تطابق</span>
+              </div>
             </div>
 
             <div className="p-6 md:p-8 flex flex-col h-full flex-grow text-right relative z-10">
-              
+
               <div className="pl-20 mb-4">
                 <h2 className="text-xl md:text-2xl font-bold text-white mb-2 pr-2">{rec.title}</h2>
                 <p className="text-[#94A3B8] text-xs md:text-sm leading-relaxed pr-2">
@@ -195,9 +195,9 @@ const FinalResult = ({ onRestart, result }) => {
 
               {/* Card CTA */}
               <div className="mt-auto pt-2">
-                 <button className="w-full bg-[#3B82F6] hover:bg-[#2563EB] text-white py-3 rounded-xl font-bold text-sm md:text-base transition-colors">
-                    عرض خارطة الطريق
-                 </button>
+                <button className="w-full bg-[#3B82F6] hover:bg-[#2563EB] text-white py-3 rounded-xl font-bold text-sm md:text-base transition-colors">
+                  عرض خارطة الطريق
+                </button>
               </div>
 
             </div>
@@ -210,22 +210,22 @@ const FinalResult = ({ onRestart, result }) => {
         {!feedbackSubmitted ? (
           <>
             <h3 className="text-white font-bold text-lg mb-4">شايف ان النتيجة دي بتعبر عن ميولك الفعلية ؟</h3>
-            
+
             {feedback !== 'unsuitable' ? (
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <button 
+                <button
                   onClick={() => handleFeedbackSubmit('suitable')}
                   className="bg-[#22C55E]/10 border border-[#22C55E]/30 text-[#22C55E] hover:bg-[#22C55E] hover:text-white px-4 py-2.5 rounded-xl transition-colors font-bold text-sm"
                 >
                   نعم، مناسب
                 </button>
-                <button 
+                <button
                   onClick={() => handleFeedbackSubmit('not_sure')}
                   className="bg-[#F97316]/10 border border-[#F97316]/30 text-[#F97316] hover:bg-[#F97316] hover:text-white px-4 py-2.5 rounded-xl transition-colors font-bold text-sm"
                 >
                   مش متأكد بصراحة
                 </button>
-                <button 
+                <button
                   onClick={() => setFeedback('unsuitable')}
                   className="bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#EF4444] hover:bg-[#EF4444] hover:text-white px-4 py-2.5 rounded-xl transition-colors font-bold text-sm"
                 >
@@ -240,25 +240,24 @@ const FinalResult = ({ onRestart, result }) => {
                     <button
                       key={idx}
                       onClick={() => setSuggestedTrack(track)}
-                      className={`px-4 py-2.5 rounded-xl border transition-colors text-sm font-bold ${
-                        suggestedTrack === track
+                      className={`px-4 py-2.5 rounded-xl border transition-colors text-sm font-bold ${suggestedTrack === track
                           ? 'bg-[#3B82F6] border-[#3B82F6] text-white'
                           : 'bg-[#101822] border-[#1E293B] text-[#94A3B8] hover:border-[#3B82F6]'
-                      }`}
+                        }`}
                     >
                       {track}
                     </button>
                   ))}
                 </div>
                 <div className="flex gap-3 w-full">
-                  <button 
+                  <button
                     onClick={handleTrackSuggestSubmit}
                     disabled={!suggestedTrack || isSubmittingFeedback}
                     className="flex-grow bg-[#3B82F6] text-white py-2.5 rounded-xl font-bold hover:bg-[#2563EB] disabled:opacity-50 transition-colors"
                   >
                     {isSubmittingFeedback ? 'جاري الإرسال...' : 'إرسال'}
                   </button>
-                  <button 
+                  <button
                     onClick={() => setFeedback(null)}
                     className="bg-[#1E293B] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-[#334155] transition-colors"
                   >
@@ -281,14 +280,14 @@ const FinalResult = ({ onRestart, result }) => {
 
       {/* Global CTA */}
       <div className="w-full max-w-[600px] flex items-center justify-between border-t border-[#1E293B] pt-6 flex-col sm:flex-row gap-4 mb-10">
-         <button className="w-full sm:w-auto bg-[#1E293B] hover:bg-[#334155] text-white py-3 px-8 rounded-xl font-bold transition-colors order-2 sm:order-1 text-sm">
-            تصفح كل المسارات
-         </button>
-         
-         <div className="text-right order-1 sm:order-2">
-            <h3 className="text-white font-bold text-lg mb-1">غير متأكد من النتيجة؟</h3>
-            <p className="text-[#94A3B8] text-xs md:text-sm">يمكنك دائماً البدء بمسار وتغييره لاحقاً</p>
-         </div>
+        <button className="w-full sm:w-auto bg-[#1E293B] hover:bg-[#334155] text-white py-3 px-8 rounded-xl font-bold transition-colors order-2 sm:order-1 text-sm">
+          تصفح كل المسارات
+        </button>
+
+        <div className="text-right order-1 sm:order-2">
+          <h3 className="text-white font-bold text-lg mb-1">غير متأكد من النتيجة؟</h3>
+          <p className="text-[#94A3B8] text-xs md:text-sm">يمكنك دائماً البدء بمسار وتغييره لاحقاً</p>
+        </div>
       </div>
 
     </div>
