@@ -82,8 +82,8 @@ const AdminDashboard = () => {
       <div className="max-w-[1400px] mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">لوحة تحكم التقييمات</h1>
-          <button 
-            onClick={() => window.location.href = '/'} 
+          <button
+            onClick={() => window.location.href = '/'}
             className="px-4 py-2 bg-[#1E293B] hover:bg-[#334155] rounded-xl transition-colors font-bold text-sm"
           >
             العودة للموقع
@@ -138,7 +138,7 @@ const AdminDashboard = () => {
                       </td>
                       <td className="px-4 py-4">
                         <span className="inline-block px-3 py-1 bg-[#1D83CC]/20 text-[#60A5FA] rounded-full text-sm font-semibold">
-                          {item.result_confidence?.top_track || item.result_track || '-'} 
+                          {item.result_confidence?.top_track || item.result_track || '-'}
                         </span>
                       </td>
                       <td className="px-4 py-4 text-sm text-[#94A3B8]">
