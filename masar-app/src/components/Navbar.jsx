@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { HiMenuAlt3, HiX } from 'react-icons/hi';
+import { useState, useEffect } from "react";
+import { HiMenuAlt3, HiX } from "react-icons/hi";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,15 +10,16 @@ const Navbar = () => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navLinks = [
-    { label: 'الرئيسية', href: '#hero' },
-    { label: 'عن مسار', href: '#about' },
-    { label: 'لماذا مسار', href: '#why' },
-    { label: 'تواصل معنا', href: '#contact' },
+    { label: "الرئيسية", href: "#hero" },
+    { label: "التراكات المتاحة", href: "#tracks" },
+    { label: "عن مسار", href: "#about" },
+    { label: "لماذا مسار", href: "#why" },
+    { label: "تواصل معنا", href: "#contact" },
   ];
 
   return (
@@ -25,10 +27,10 @@ const Navbar = () => {
       id="navbar"
       className={`fixed top-0 right-0 left-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-[#010C1D]/95 backdrop-blur-md shadow-lg shadow-black/20'
-          : 'bg-transparent'
+          ? "bg-[#010C1D]/95 backdrop-blur-md shadow-lg shadow-black/20"
+          : "bg-transparent"
       }`}
-      style={{ height: '80px' }}
+      style={{ height: "80px" }}
     >
       {/* Navbar top border when not scrolled */}
       {!scrolled && (
@@ -38,7 +40,11 @@ const Navbar = () => {
       <div className="max-w-[1123px] mx-auto px-0 h-full flex items-center justify-between">
         {/* Logo */}
         <a href="#" className="flex items-center">
-          <img src="/images/logo.png" alt="Logo" className="w-auto h-16 md:h-24 object-contain" />
+          <img
+            src="/images/logo.png"
+            alt="Logo"
+            className="w-auto h-16 md:h-24 object-contain"
+          />
         </a>
 
         {/* Desktop Navigation */}
@@ -57,18 +63,18 @@ const Navbar = () => {
 
         {/* CTA Buttons */}
         <div className="hidden lg:flex items-center gap-3 border border-white/10 py-1.5 px-2 rounded-xl bg-navy-light/30 backdrop-blur-sm">
-          <a
-            href="#login"
+          <Link
+            to="/login"
             className="text-white hover:text-primary transition-colors text-[14px] font-medium px-4"
           >
             تسجيل الدخول
-          </a>
-          <a
-            href="#start"
+          </Link>
+          <Link
+            to="/login"
             className="bg-primary hover:bg-primary-dark text-white px-5 py-2 rounded-lg text-[14px] font-semibold transition-all duration-300 shadow-[0_0_15px_rgba(20,110,236,0.3)]"
           >
             انشاء حساب
-          </a>
+          </Link>
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -83,7 +89,7 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       <div
-        className={`lg:hidden overflow-hidden transition-all duration-500 absolute w-full ${isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}
+        className={`lg:hidden overflow-hidden transition-all duration-500 absolute w-full ${isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}
       >
         <div className="bg-[#010C1D]/95 backdrop-blur-md border border-t-0 border-white/10 px-6 py-6 space-y-2 mx-4 rounded-b-2xl shadow-xl mt-2">
           {navLinks.map((link) => (
@@ -97,12 +103,20 @@ const Navbar = () => {
             </a>
           ))}
           <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
-            <a href="#login" onClick={() => setIsOpen(false)} className="block text-center text-white py-3 rounded-lg text-base font-medium hover:bg-white/5 transition-all">
+            <Link
+              to="/login"
+              onClick={() => setIsOpen(false)}
+              className="block text-center text-white py-3 rounded-lg text-base font-medium hover:bg-white/5 transition-all"
+            >
               تسجيل الدخول
-            </a>
-            <a href="#start" onClick={() => setIsOpen(false)} className="block text-center bg-primary text-white py-3 rounded-lg text-base font-semibold transition-all shadow-lg">
+            </Link>
+            <Link
+              to="/login"
+              onClick={() => setIsOpen(false)}
+              className="block text-center bg-primary text-white py-3 rounded-lg text-base font-semibold transition-all shadow-lg"
+            >
               انشاء حساب
-            </a>
+            </Link>
           </div>
         </div>
       </div>
