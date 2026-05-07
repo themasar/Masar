@@ -64,13 +64,13 @@ const Navbar = () => {
         {/* CTA Buttons */}
         <div className="hidden lg:flex items-center gap-3 border border-white/10 py-1.5 px-2 rounded-xl bg-navy-light/30 backdrop-blur-sm">
           <Link
-            to="/login"
+            // to="/login"
             className="text-white hover:text-primary transition-colors text-[14px] font-medium px-4"
           >
             تسجيل الدخول
           </Link>
           <Link
-            to="/login"
+            // to="/login"
             className="bg-primary hover:bg-primary-dark text-white px-5 py-2 rounded-lg text-[14px] font-semibold transition-all duration-300 shadow-[0_0_15px_rgba(20,110,236,0.3)]"
           >
             انشاء حساب

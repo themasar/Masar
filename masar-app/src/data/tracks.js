@@ -34,6 +34,26 @@ export const TRACK_DETAILS = {
     skills_count: "5 مهارات",
     tags: ["Machine Learning", "Python", "Data Science", "Deep Learning"],
   },
+  "Mobile Applications": {
+    title: "تطوير تطبيقات الموبايل (Mobile)",
+    matchColor: "from-[#EC4899]/20 to-transparent",
+    badgeColor: "bg-[#EC4899]",
+    description:
+      "بناء تطبيقات موبايل احترافية لـ Android وiOS باستخدام أحدث التقنيات.",
+    duration: "8-10 أشهر",
+    skills_count: "5 مهارات",
+    tags: ["Flutter", "React Native", "Dart", "iOS", "Android"],
+  },
+  "Software Testing": {
+    title: "اختبار البرمجيات (QA)",
+    matchColor: "from-[#06B6D4]/20 to-transparent",
+    badgeColor: "bg-[#06B6D4]",
+    description:
+      "ضمان جودة البرمجيات من خلال الاختبار اليدوي والأوتوماتيكي وكتابة test cases احترافية.",
+    duration: "6-8 أشهر",
+    skills_count: "5 مهارات",
+    tags: ["Manual Testing", "Selenium", "Postman", "JIRA", "Test Automation"],
+  },
 };
 
 export const TRACK_OPTIONS = [

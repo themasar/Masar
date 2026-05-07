@@ -33,16 +33,30 @@ const FinalResult = ({ onRestart, result, onNavigate }) => {
       }));
   }
 
+  const normalizeTrackKey = (key) => {
+    const map = {
+      Mobile: "Mobile Applications",
+      Testing: "Software Testing",
+      frontend: "Frontend",
+      backend: "Backend",
+      ai: "AI",
+    };
+    return map[key] || key;
+  };
+
   const recommendations =
     topTracks.length > 0
-      ? topTracks.map((t) => ({
-          ...(TRACK_DETAILS[t.trackKey] || TRACK_DETAILS["Default"]),
-          match: t.score.toString(),
-          title: TRACK_DETAILS[t.trackKey]
-            ? TRACK_DETAILS[t.trackKey].title
-            : t.trackKey,
-        }))
-      : [{ ...TRACK_DETAILS["UI/UX"], match: "95" }];
+      ? topTracks.map((t) => {
+          const normalizedKey = normalizeTrackKey(t.trackKey);
+          const details = TRACK_DETAILS[normalizedKey];
+          return {
+            ...(details || {}),
+            match: t.score.toString(),
+            title: details ? details.title : t.trackKey,
+            badgeColor: details?.badgeColor || "bg-[#94A3B8]",
+          };
+        })
+      : [{ ...TRACK_DETAILS["Frontend"], match: "95" }];
 
   const handleFeedbackSubmit = async (selectedFeedback) => {
     setFeedback(selectedFeedback);
