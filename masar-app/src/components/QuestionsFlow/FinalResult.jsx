@@ -217,12 +217,15 @@ const FinalResult = ({ onRestart, result, onNavigate }) => {
                         </div>
                       </div>
                     ) : feedback !== "unsuitable" ? (
-                      /* Step 2a — suitable / not_sure: textarea then submit */
+                      /* Step 2a — suitable / not_sure */
                       <div className="flex flex-col items-end gap-3 animate-fade-in">
                         <div className="flex items-center justify-between w-full">
                           <p className="text-white text-sm font-bold">
-                            عندك أي تعليق إضافي؟
+                            {feedback === "suitable"
+                              ? "إيه اللي خلاك تشوف إن المسار ده مناسب ليك؟"
+                              : "إيه اللي مخليك مش متأكد من النتيجة؟"}
                           </p>
+
                           <button
                             onClick={() => {
                               setFeedback(null);
@@ -233,14 +236,20 @@ const FinalResult = ({ onRestart, result, onNavigate }) => {
                             إلغاء
                           </button>
                         </div>
+
                         <textarea
                           value={rejectionReason}
                           onChange={(e) => setRejectionReason(e.target.value)}
-                          placeholder="اكتب تعليقك هنا..."
+                          placeholder={
+                            feedback === "suitable"
+                              ? "شاركنا السبب..."
+                              : "قولنا إيه اللي خلاك مش متأكد..."
+                          }
                           rows={2}
                           className="w-full bg-[#101822] border border-[#1E293B] rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-[#3B82F6] resize-none transition-colors"
                           dir="rtl"
                         />
+
                         <button
                           onClick={handleCommentSubmit}
                           disabled={
