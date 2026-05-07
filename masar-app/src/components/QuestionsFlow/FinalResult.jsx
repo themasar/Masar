@@ -59,16 +59,19 @@ const FinalResult = ({ onRestart, result, onNavigate }) => {
       })
       : [{ ...TRACK_DETAILS["Frontend"], match: "95" }];
 
-  const handleFeedbackSubmit = async (selectedFeedback) => {
+  const handleFeedbackSelect = (selectedFeedback) => {
     setFeedback(selectedFeedback);
-    if (selectedFeedback !== "unsuitable") {
-      await submitToDb(selectedFeedback, null);
-    }
+    setRejectionReason("");
+    setSuggestedTrack("");
   };
 
   const handleTrackSuggestSubmit = async () => {
     if (!suggestedTrack) return;
     await submitToDb("unsuitable", suggestedTrack);
+  };
+
+  const handleCommentSubmit = async () => {
+    await submitToDb(feedback, null);
   };
 
   const submitToDb = async (fbValue, trackValue) => {
@@ -84,7 +87,7 @@ const FinalResult = ({ onRestart, result, onNavigate }) => {
         .update({
           user_feedback: fbValue,
           user_suggested_track: trackValue,
-          user_rejection_reason: rejectionReason || null
+          user_rejection_reason: rejectionReason || null,
         })
         .eq("id", result.dbId);
       if (error) console.error("Error updating feedback:", error);
@@ -186,33 +189,79 @@ const FinalResult = ({ onRestart, result, onNavigate }) => {
               <div className="mt-auto pt-4 border-t border-[#1E293B]">
                 {!feedbackSubmitted ? (
                   <>
-                    {feedback !== "unsuitable" ? (
+                    {/* Step 1 — no feedback selected yet */}
+                    {!feedback ? (
                       <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
                         <p className="text-[#94A3B8] text-xs font-bold shrink-0">
                           النتيجة بتعبر عن ميولك؟
                         </p>
                         <div className="flex gap-2">
                           <button
-                            onClick={() => handleFeedbackSubmit("suitable")}
+                            onClick={() => handleFeedbackSelect("suitable")}
                             className="bg-[#22C55E]/10 border border-[#22C55E]/30 text-[#22C55E] hover:bg-[#22C55E] hover:text-white px-3 py-1.5 rounded-lg transition-colors font-bold text-xs"
                           >
                             نعم، مناسب
                           </button>
                           <button
-                            onClick={() => handleFeedbackSubmit("not_sure")}
+                            onClick={() => handleFeedbackSelect("not_sure")}
                             className="bg-[#F97316]/10 border border-[#F97316]/30 text-[#F97316] hover:bg-[#F97316] hover:text-white px-3 py-1.5 rounded-lg transition-colors font-bold text-xs"
                           >
                             مش متأكد
                           </button>
                           <button
-                            onClick={() => setFeedback("unsuitable")}
+                            onClick={() => handleFeedbackSelect("unsuitable")}
                             className="bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#EF4444] hover:bg-[#EF4444] hover:text-white px-3 py-1.5 rounded-lg transition-colors font-bold text-xs"
                           >
                             غير مناسب
                           </button>
                         </div>
                       </div>
+                    ) : feedback !== "unsuitable" ? (
+                      /* Step 2a — suitable / not_sure */
+                      <div className="flex flex-col items-end gap-3 animate-fade-in">
+                        <div className="flex items-center justify-between w-full">
+                          <p className="text-white text-sm font-bold">
+                            {feedback === "suitable"
+                              ? "إيه اللي خلاك تشوف إن المسار ده مناسب ليك؟"
+                              : "إيه اللي مخليك مش متأكد من النتيجة؟"}
+                          </p>
+
+                          <button
+                            onClick={() => {
+                              setFeedback(null);
+                              setRejectionReason("");
+                            }}
+                            className="text-[#64748B] hover:text-white text-xs transition-colors"
+                          >
+                            إلغاء
+                          </button>
+                        </div>
+
+                        <textarea
+                          value={rejectionReason}
+                          onChange={(e) => setRejectionReason(e.target.value)}
+                          placeholder={
+                            feedback === "suitable"
+                              ? "شاركنا السبب..."
+                              : "قولنا إيه اللي خلاك مش متأكد..."
+                          }
+                          rows={2}
+                          className="w-full bg-[#101822] border border-[#1E293B] rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-[#3B82F6] resize-none transition-colors"
+                          dir="rtl"
+                        />
+
+                        <button
+                          onClick={handleCommentSubmit}
+                          disabled={
+                            !rejectionReason.trim() || isSubmittingFeedback
+                          }
+                          className="bg-[#3B82F6] text-white py-2 px-6 rounded-lg font-bold text-xs hover:bg-[#2563EB] disabled:opacity-50 transition-colors self-stretch"
+                        >
+                          {isSubmittingFeedback ? "جاري الإرسال..." : "إرسال"}
+                        </button>
+                      </div>
                     ) : (
+                      /* Step 2b — unsuitable: dropdown + textarea then submit */
                       <div className="flex flex-col items-end text-right animate-fade-in gap-3">
                         <div className="flex items-center justify-between w-full">
                           <p className="text-white text-sm font-bold">
@@ -281,7 +330,7 @@ const FinalResult = ({ onRestart, result, onNavigate }) => {
                           </div>
                         </div>
 
-                        {/* Textarea — only when a track is selected */}
+                        {/* Textarea — shows after track is selected */}
                         {suggestedTrack && (
                           <textarea
                             value={rejectionReason}
@@ -295,7 +344,11 @@ const FinalResult = ({ onRestart, result, onNavigate }) => {
 
                         <button
                           onClick={handleTrackSuggestSubmit}
-                          disabled={!suggestedTrack || !rejectionReason || isSubmittingFeedback}
+                          disabled={
+                            !suggestedTrack ||
+                            !rejectionReason.trim() ||
+                            isSubmittingFeedback
+                          }
                           className="bg-[#3B82F6] text-white py-2 px-6 rounded-lg font-bold text-xs hover:bg-[#2563EB] disabled:opacity-50 transition-colors self-stretch"
                         >
                           {isSubmittingFeedback ? "جاري الإرسال..." : "إرسال"}
