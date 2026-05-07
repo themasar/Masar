@@ -4,7 +4,7 @@ import QuestionsFlow from "../components/QuestionsFlow";
 const AssessmentPage = () => {
   const navigate = useNavigate();
 
-  return <QuestionsFlow onBackToMain={(target = "/") => navigate(target)} />;
+  return <QuestionsFlow onBackToMain={() => navigate("/")} />;
 };
 
 export default AssessmentPage;
