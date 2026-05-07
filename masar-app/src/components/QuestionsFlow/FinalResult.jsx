@@ -84,8 +84,7 @@ const FinalResult = ({ onRestart, result, onNavigate }) => {
         .update({
           user_feedback: fbValue,
           user_suggested_track: trackValue,
-          user_rejection_reason:
-            trackValue === "غير ذلك" ? rejectionReason : null,
+          user_rejection_reason: rejectionReason || null
         })
         .eq("id", result.dbId);
       if (error) console.error("Error updating feedback:", error);
