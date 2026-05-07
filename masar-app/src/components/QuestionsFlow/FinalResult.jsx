@@ -36,6 +36,7 @@ const FinalResult = ({ onRestart, result, onNavigate }) => {
   const normalizeTrackKey = (key) => {
     const map = {
       Mobile: "Mobile Applications",
+      "Mobile Application": "Mobile Applications",
       Testing: "Software Testing",
       frontend: "Frontend",
       backend: "Backend",
@@ -101,8 +102,11 @@ const FinalResult = ({ onRestart, result, onNavigate }) => {
       {/* Header Back Button */}
       <div className="w-full flex items-center justify-start absolute top-6 right-6 rtl:left-auto rtl:right-6">
         <button
-          onClick={onRestart}
-          className="flex items-center gap-2 text-white hover:text-[#94A3B8] transition-colors font-bold text-sm"
+          onClick={() => {
+            onRestart();
+            onNavigate("/");
+          }}
+          className="flex items-center gap-2 text-white hover:text-[#94A3B8] transition-colors font-bold text-sm cursor-pointer"
         >
           <HiOutlineChevronRight className="w-5 h-5 rtl:hidden" />
           <HiOutlineChevronRight className="w-5 h-5 hidden rtl:block rotate-180" />
