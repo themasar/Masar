@@ -48,15 +48,15 @@ const FinalResult = ({ onRestart, result, onNavigate }) => {
   const recommendations =
     topTracks.length > 0
       ? topTracks.map((t) => {
-          const normalizedKey = normalizeTrackKey(t.trackKey);
-          const details = TRACK_DETAILS[normalizedKey];
-          return {
-            ...(details || {}),
-            match: t.score.toString(),
-            title: details ? details.title : t.trackKey,
-            badgeColor: details?.badgeColor || "bg-[#94A3B8]",
-          };
-        })
+        const normalizedKey = normalizeTrackKey(t.trackKey);
+        const details = TRACK_DETAILS[normalizedKey];
+        return {
+          ...(details || {}),
+          match: t.score.toString(),
+          title: details ? details.title : t.trackKey,
+          badgeColor: details?.badgeColor || "bg-[#94A3B8]",
+        };
+      })
       : [{ ...TRACK_DETAILS["Frontend"], match: "95" }];
 
   const handleFeedbackSubmit = async (selectedFeedback) => {
@@ -287,7 +287,7 @@ const FinalResult = ({ onRestart, result, onNavigate }) => {
                           <textarea
                             value={rejectionReason}
                             onChange={(e) => setRejectionReason(e.target.value)}
-                            placeholder="ليه شايف إن التراك ده مناسب أكتر؟ (اختياري)"
+                            placeholder="ليه شايف إن التراك ده مناسب أكتر؟"
                             rows={2}
                             className="w-full bg-[#101822] border border-[#1E293B] rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-[#3B82F6] resize-none transition-colors"
                             dir="rtl"
@@ -296,7 +296,7 @@ const FinalResult = ({ onRestart, result, onNavigate }) => {
 
                         <button
                           onClick={handleTrackSuggestSubmit}
-                          disabled={!suggestedTrack || isSubmittingFeedback}
+                          disabled={!suggestedTrack || !rejectionReason || isSubmittingFeedback}
                           className="bg-[#3B82F6] text-white py-2 px-6 rounded-lg font-bold text-xs hover:bg-[#2563EB] disabled:opacity-50 transition-colors self-stretch"
                         >
                           {isSubmittingFeedback ? "جاري الإرسال..." : "إرسال"}
